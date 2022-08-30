@@ -102,16 +102,18 @@ class DepartmentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
-                //
+
                 Tables\Filters\SelectFilter::make(__('Unit'))
                     ->relationship('unit', 'short_name'),
 
                 Tables\Filters\SelectFilter::make(__('Parent'))
-                    ->options(
-                        function (){
-                            return Department::whereIn('id', Department::get('parent_id'))->pluck('name', 'id');
-                        })
-                    ->column('parent_id'),
+                    ->relationship('parent', 'name')
+//                    ->options(
+//                        function (){
+//                            return Department::whereIn('id', Department::get('parent_id'))->pluck('name', 'id');
+//                        })
+//                    ->column('parent_id')
+                ,
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\WorkerResource\Pages;
 use App\Filament\Resources\WorkerResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListWorkers extends ListRecords
 {
@@ -16,4 +17,5 @@ class ListWorkers extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
 }

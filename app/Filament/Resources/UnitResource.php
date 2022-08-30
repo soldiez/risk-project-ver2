@@ -162,7 +162,8 @@ class UnitResource extends Resource
                         function (){
                             return Unit::whereIn('id', Unit::get('parent_id'))->pluck('short_name', 'id');
                         })
-                    ->column('parent_id'),
+                    ->column('parent_id')
+                ,
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

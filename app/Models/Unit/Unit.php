@@ -67,7 +67,8 @@ class Unit extends Model
     public function territories(){
         return $this->hasMany(Territory::class);
     }
-    public function departments(){
+    public function departments(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
         return $this->hasMany(Department::class);
     }
     public function jobPositions(){

@@ -3,6 +3,8 @@
 namespace Database\Factories\Unit;
 
 use App\Models\Unit\Department;
+use App\Models\Unit\Unit;
+use App\Models\Unit\Worker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class DepartmentFactory extends Factory
@@ -17,15 +19,15 @@ class DepartmentFactory extends Factory
     {
         return [
             //
-            'parent_id' => $this->faker->numberBetween(1, 5),
+        //    'parent_id' => Department::all()->random()->id,
 //                function() {
 //            if ($dep = Department::inRandomOrder()->first()) {return $dep->id;}
 //             return null;},
-            'unit_id' => $this->faker->numberBetween(1, 2),
+        //    'unit_id' => Unit::all()->random()->id,
             'name' => $this->faker->text(15),
-            'manager_id' => $this->faker->numberBetween(1, 10),
+        //    'manager_id' => Worker::all()->random()->id,
             'info' => $this->faker->realText,
-            'status' => 'active'
+            'status' => 'Active'
         ];
     }
 }

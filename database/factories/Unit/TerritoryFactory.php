@@ -3,6 +3,8 @@
 namespace Database\Factories\Unit;
 
 use App\Models\Unit\Territory;
+use App\Models\Unit\Unit;
+use App\Models\Unit\Worker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TerritoryFactory extends Factory
@@ -16,15 +18,14 @@ class TerritoryFactory extends Factory
     public function definition()
     {
         return [
-            //
-            'parent_id' => $this->faker->numberBetween(1, 5),
-            'unit_id' => $this->faker->numberBetween(1, 5),
+          //  'parent_id' => Territory::all()->random()->id,
+          //  'unit_id' => Unit::all()->random()->id,
             'name' => $this->faker->text(15),
-            'responsible_id' => $this->faker->numberBetween(1, 9),
+          //  'responsible_id' => Worker::all()->random()->id,
             'coordinate' => $this->faker->address,
             'address' => $this->faker->address,
             'info' => $this->faker->sentence,
-            'status' => 'active'
+            'status' => 'Active'
         ];
     }
 }

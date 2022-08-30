@@ -4,9 +4,7 @@ namespace App\Models\Unit;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Kalnoy\Nestedset\NodeTrait;
-use Orchid\Filters\Filterable;
-use Orchid\Screen\AsSource;
+
 
 class Department extends Model
 {
@@ -43,11 +41,17 @@ class Department extends Model
 
     protected $table = 'departments';
 
-    //Relationships for unit
-    public function parent(){
+    //Relationships for department
+    public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Department::class);
     }
-    public function unit(){
+    public function departments(){
+        return $this->hasMany(Department::class);
+    }
+
+    public function unit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
         return $this->belongsTo(Unit::class);
     }
     public function manager(){

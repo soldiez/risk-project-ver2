@@ -35,6 +35,9 @@ class WorkerResource extends Resource
 
     public static function form(Form $form): Form
     {
+
+
+
         return $form
             ->schema([
                 Forms\Components\Fieldset::make('')
@@ -128,7 +131,7 @@ class WorkerResource extends Resource
                     ->label(__('Department'))
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('unit.name')
+                Tables\Columns\TextColumn::make('unit.short_name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),
@@ -154,14 +157,25 @@ class WorkerResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->options(Unit::all()->pluck('short_name', 'id'))
-                    ->column('id'),
+                    ->options(
+                        function (){
+                            return Unit::whereIn('id', Worker::get('unit_id'))->pluck('short_name', 'id');
+                        })
+                    ->column('unit_id')
+                ,
                 Tables\Filters\SelectFilter::make(__('Department'))
-                    ->options(Department::all()->pluck('name', 'id'))
-                    ->column('id'),
+                    ->options(
+                        function (){
+                            return Department::whereIn('id', Worker::get('department_id'))->pluck('name', 'id');
+                        })
+                    ->column('department_id')
+                ,
                 Tables\Filters\SelectFilter::make(__('JobPosition'))
-                    ->options(JobPosition::all()->pluck('name', 'id'))
-                    ->column('id'),
+                    ->options(
+                        function (){
+                            return JobPosition::whereIn('id', Worker::get('job_position_id'))->pluck('name', 'id');
+                        })
+                    ->column('job_position_id'),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

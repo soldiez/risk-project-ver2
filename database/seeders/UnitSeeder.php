@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Unit\Worker;
+use App\Models\Unit\Territory;
+use App\Models\Unit\Unit;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
-class WorkerSeeder extends Seeder
+class UnitSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,12 +16,7 @@ class WorkerSeeder extends Seeder
      */
     public function run()
     {
-        //
-
-        DB::table('workers')-
-
-        Worker::factory()
-            ->count(20)
+        Unit::factory()
             ->create();
     }
 }

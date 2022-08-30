@@ -54,7 +54,7 @@ class Worker extends Model
 
     //Relationships for unit
     public function jobPosition(){
-        return $this->belongsTo(JobPosition::class, 'job_position_id');
+        return $this->belongsTo(JobPosition::class);
     }
     public function department(){
         return $this->belongsTo(Department::class);
