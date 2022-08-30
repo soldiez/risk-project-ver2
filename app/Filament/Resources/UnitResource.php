@@ -8,6 +8,7 @@ use App\Models\Unit\Unit;
 use App\Models\Unit\Worker;
 use Filament\Forms;
 use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -181,11 +182,10 @@ class UnitResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
             RelationManagers\TerritoriesRelationManager::class,
-            RelationManagers\DepartmentsRelationManager::class,
-            RelationManagers\JobPositionsRelationManager::class,
-            RelationManagers\WorkersRelationManager::class,
+                RelationManagers\DepartmentsRelationManager::class,
+                RelationManagers\JobPositionsRelationManager::class,
+                RelationManagers\WorkersRelationManager::class,
         ];
     }
 

@@ -114,7 +114,7 @@ class WorkersRelationManager extends RelationManager
                     ->label(__('Department'))
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('unit.name')
+                Tables\Columns\TextColumn::make('unit.short_name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),
