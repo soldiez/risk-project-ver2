@@ -42,7 +42,7 @@ class WorkersRelationManager extends RelationManager
                             ->label(__('Department'))
                             ->options(Department::all()->pluck('name', 'id')),
                         Forms\Components\Select::make('position_id')
-                            ->label(__('Job position'))
+                            ->label(__('Position'))
                             ->options(Position::all()->pluck('name', 'id')),
                     ])->columns(3),
                 Forms\Components\Fieldset::make('')
@@ -106,7 +106,7 @@ class WorkersRelationManager extends RelationManager
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('position.name')
-                    ->label(__('Job position'))
+                    ->label(__('Position'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('department.name')

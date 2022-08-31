@@ -19,7 +19,7 @@ class UnitOverview extends BaseWidget
         return [
             Card::make('Territories', $this->record->territories->count()),
             Card::make('Departments', $this->record->departments->count()),
-            Card::make('Job Positions', $this->record->Positions->count()),
+            Card::make('Positions', $this->record->Positions->count()),
             Card::make('Workers', $this->record->workers->count()),
         ];
     }
