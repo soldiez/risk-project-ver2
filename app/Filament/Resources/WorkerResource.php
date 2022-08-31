@@ -55,7 +55,7 @@ class WorkerResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('unit_id')
                             ->label(__('Unit'))
-                            ->options(Unit::all()->pluck('short_name', 'id')),
+                            ->options(Unit::all()->pluck('name', 'id')),
                         Forms\Components\Select::make('department_id')
                             ->label(__('Department'))
                             ->options(Department::all()->pluck('name', 'id')),
@@ -126,7 +126,7 @@ class WorkerResource extends Resource
                     ->label(__('Department'))
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('unit.short_name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),
@@ -154,7 +154,7 @@ class WorkerResource extends Resource
                 Tables\Filters\SelectFilter::make(__('Unit'))
                     ->options(
                         function (){
-                            return Unit::whereIn('id', Worker::get('unit_id'))->pluck('short_name', 'id');
+                            return Unit::whereIn('id', Worker::get('unit_id'))->pluck('name', 'id');
                         })
                     ->column('unit_id')
                 ,

@@ -37,7 +37,7 @@ class WorkersRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Select::make('unit_id')
                             ->label(__('Unit'))
-                            ->options(Unit::all()->pluck('short_name', 'id')),
+                            ->options(Unit::all()->pluck('name', 'id')),
                         Forms\Components\Select::make('department_id')
                             ->label(__('Department'))
                             ->options(Department::all()->pluck('name', 'id')),
@@ -113,7 +113,7 @@ class WorkersRelationManager extends RelationManager
                     ->label(__('Department'))
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('unit.short_name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),
@@ -139,7 +139,7 @@ class WorkersRelationManager extends RelationManager
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->options(Unit::all()->pluck('short_name', 'id'))
+                    ->options(Unit::all()->pluck('name', 'id'))
                     ->column('id'),
                 Tables\Filters\SelectFilter::make(__('Job position'))
                     ->options(Position::all()->pluck('name', 'id'))

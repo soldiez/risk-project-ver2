@@ -16,7 +16,7 @@ class Unit extends Model
 
     protected $fillable = [
         'id',
-        'short_name',
+        'name',
         'long_name',
         'phone_main',
         'phone_reserve',
@@ -31,7 +31,7 @@ class Unit extends Model
     ];
     protected $allowedSorts = [
         'id',
-        'short_name',
+        'name',
         'long_name',
         'phone_main',
         'phone_reserve',
@@ -46,7 +46,7 @@ class Unit extends Model
 
     protected $allowedFilters = [
         'id',
-        'short_name',
+        'name',
         'long_name',
         'phone_main',
         'phone_reserve',

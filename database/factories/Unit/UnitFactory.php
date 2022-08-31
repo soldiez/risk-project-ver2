@@ -23,8 +23,8 @@ class UnitFactory extends Factory
      */
     public function definition()
     {
-        $shortName = $this->faker->company;
-        $longName = $shortName . ' Long Name';
+        $name = $this->faker->company;
+        $longName = $name . ' Long Name';
 
         $parentId = Unit::all()->random()->id;
 
@@ -32,7 +32,7 @@ class UnitFactory extends Factory
 
         return [
             //
-        'short_name' => $shortName,
+        'name' => $name,
         'long_name' =>  $longName,
         'phone_main' =>$this->faker->phoneNumber,
         'phone_reserve' => $this->faker->phoneNumber,

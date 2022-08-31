@@ -32,7 +32,7 @@ class UnitResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('short_name')
+                Forms\Components\TextInput::make('name')
                     ->required()
                     ->label(__('Short Name')),
                 Forms\Components\TextInput::make('long_name')
@@ -45,10 +45,10 @@ class UnitResource extends Resource
                 Forms\Components\Select::make('parent_id')
                     ->reactive()
                     ->options(function (callable $get){ //do not choice by myself
-                        if($get('short_name') != NULL) {
-                            return Unit::where('short_name', '!=', $get('short_name'))->pluck('short_name', 'id');
+                        if($get('name') != NULL) {
+                            return Unit::where('name', '!=', $get('name'))->pluck('name', 'id');
                         }
-                        return Unit::all()->pluck('short_name', 'id');
+                        return Unit::all()->pluck('name', 'id');
                     })
                     ->searchable()
                     ->label(__('Parent'))
@@ -97,7 +97,7 @@ class UnitResource extends Resource
                 Tables\Columns\ImageColumn::make('logo_unit')
                     ->label(__('Logo'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('short_name')
+                Tables\Columns\TextColumn::make('name')
                     ->label(__('Short name'))
                     ->sortable()
                     ->searchable()
@@ -137,7 +137,7 @@ class UnitResource extends Resource
                     ->label(__('Safety manager'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('parent.short_name')
+                Tables\Columns\TextColumn::make('parent.name')
                     ->label(__('Parent'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -158,12 +158,12 @@ class UnitResource extends Resource
             ->filters([
                 //
                 Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->options(Unit::all()->pluck('short_name', 'id'))
+                    ->options(Unit::all()->pluck('name', 'id'))
                     ->column('id'),
                 Tables\Filters\SelectFilter::make(__('Parent'))
                     ->options(
                         function (){
-                            return Unit::whereIn('id', Unit::get('parent_id'))->pluck('short_name', 'id');
+                            return Unit::whereIn('id', Unit::get('parent_id'))->pluck('name', 'id');
                         })
                     ->column('parent_id')
                 ,

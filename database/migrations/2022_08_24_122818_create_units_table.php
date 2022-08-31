@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-            $table->text('short_name');
+            $table->text('name');
             $table->text('long_name')->nullable();
             $table->text('phone_main')->nullable();
             $table->text('phone_reserve')->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
         \Illuminate\Support\Facades\DB::table('units')->insert(
             [
                 'id' => 1,
-                'short_name' => '-',
+                'name' => '-',
                 'long_name' => '-',
             ]
         );

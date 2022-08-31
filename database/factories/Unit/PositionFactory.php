@@ -22,7 +22,7 @@ class PositionFactory extends Factory
           //  'parent_id'=> Position::all()->random()->id,
           //  'department_id'=> Department::all()->random()->id,
           //  'unit_id' => Unit::all()->random()->id,
-            'name' => $this->faker->text(15),
+            'name' => $this->faker->jobTitle(),
             'grade' => $this->faker->numberBetween(1, 10),
             'info' => $this->faker->sentence,
             'status' => 'Active'

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TerritoriesRelationManager extends RelationManager
 {
     protected static string $relationship = 'territories';
-    protected static ?string $recordTitleAttribute = 'short_name';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -24,7 +24,7 @@ class TerritoriesRelationManager extends RelationManager
             ->schema([
 
                 Forms\Components\Select::make('unit_id')
-                    ->options(Unit::all()->pluck('short_name', 'id'))
+                    ->options(Unit::all()->pluck('name', 'id'))
                     ->searchable()
                     ->label(__('Unit')),
                 Forms\Components\Select::make('parent_id')
@@ -71,7 +71,7 @@ class TerritoriesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('unit.short_name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),

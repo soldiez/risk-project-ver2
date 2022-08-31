@@ -31,7 +31,7 @@ class TerritoryResource extends Resource
             ->schema([
 
                 Forms\Components\Select::make('unit_id')
-                    ->options(Unit::all()->pluck('short_name', 'id'))
+                    ->options(Unit::all()->pluck('name', 'id'))
                     ->searchable()
                     ->label(__('Unit')),
                 Forms\Components\Select::make('parent_id')
@@ -77,7 +77,7 @@ class TerritoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('unit.short_name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),
@@ -128,7 +128,7 @@ class TerritoryResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->relationship('unit', 'short_name'),
+                    ->relationship('unit', 'name'),
 
                 Tables\Filters\SelectFilter::make(__('Parent'))
                     ->options(

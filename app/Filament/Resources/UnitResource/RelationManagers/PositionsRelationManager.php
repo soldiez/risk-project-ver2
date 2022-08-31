@@ -17,7 +17,7 @@ class PositionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'positions';
 
-    protected static ?string $recordTitleAttribute = 'short_name';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -26,7 +26,7 @@ class PositionsRelationManager extends RelationManager
                 Forms\Components\Select::make('unit_id')
                     ->label(__('Unit'))
                     ->searchable()
-                    ->options(Unit::all()->pluck('short_name', 'id')),
+                    ->options(Unit::all()->pluck('name', 'id')),
                 Forms\Components\Select::make('department_id')
                     ->label(__('Department'))
                     ->searchable()
@@ -63,7 +63,7 @@ class PositionsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('unit.short_name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),

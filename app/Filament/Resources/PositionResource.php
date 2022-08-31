@@ -32,7 +32,7 @@ class PositionResource extends Resource
                 Forms\Components\Select::make('unit_id')
                     ->label(__('Unit'))
                     ->searchable()
-                    ->options(Unit::all()->pluck('short_name', 'id')),
+                    ->options(Unit::all()->pluck('name', 'id')),
                 Forms\Components\Select::make('department_id')
                     ->label(__('Department'))
                     ->searchable()
@@ -69,7 +69,7 @@ class PositionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('unit.short_name')
+                Tables\Columns\TextColumn::make('unit.name')
                     ->label(__('Unit'))
                     ->sortable()
                     ->toggleable(),
@@ -109,7 +109,7 @@ class PositionResource extends Resource
             ->filters([
 
                 Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->relationship('unit', 'short_name'),
+                    ->relationship('unit', 'name'),
 
                 Tables\Filters\SelectFilter::make(__('Parent'))
                     ->options(
