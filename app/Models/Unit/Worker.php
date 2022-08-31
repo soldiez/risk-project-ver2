@@ -23,7 +23,7 @@ class Worker extends Model
         'phone',
         'email',
         'personnel_number',
-        'job_position_id',
+        'position_id',
         'department_id',
         'unit_id',
         'birthday',
@@ -32,7 +32,7 @@ class Worker extends Model
     protected $allowedSorts = [
         'last_name',
         'first_name',
-        'job_position_id',
+        'position_id',
         'department_id',
         'unit_id',
         'status',
@@ -43,7 +43,7 @@ class Worker extends Model
         'last_name',
         'first_name',
         'middle_name',
-        'job_position_id',
+        'position_id',
         'department_id',
         'unit_id',
         'status',
@@ -53,8 +53,8 @@ class Worker extends Model
     protected $table = 'workers';
 
     //Relationships for unit
-    public function jobPosition(){
-        return $this->belongsTo(JobPosition::class);
+    public function position(){
+        return $this->belongsTo(Position::class);
     }
     public function department(){
         return $this->belongsTo(Department::class);

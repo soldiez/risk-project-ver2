@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Kalnoy\Nestedset\NestedSet;
 
-class CreateJobPositionsTable extends Migration
+class CreatePositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateJobPositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('job_positions', function (Blueprint $table) {
+        Schema::create('positions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('parent_id')->nullable();
             $table->foreignId('department_id')->nullable();
@@ -25,7 +25,7 @@ class CreateJobPositionsTable extends Migration
             $table->string('status')->nullable();
             $table->timestamps();
         });
-        \Illuminate\Support\Facades\DB::table('job_positions')->insert(
+        \Illuminate\Support\Facades\DB::table('positions')->insert(
             [
                 'id' => 1,
                 'unit_id' => 0,
@@ -41,6 +41,6 @@ class CreateJobPositionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('job_positions');
+        Schema::dropIfExists('positions');
     }
 }

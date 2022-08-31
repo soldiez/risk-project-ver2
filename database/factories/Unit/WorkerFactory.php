@@ -3,7 +3,7 @@
 namespace Database\Factories\Unit;
 
 use App\Models\Unit\Department;
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use App\Models\Unit\Unit;
 use App\Models\Unit\Worker;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -32,7 +32,7 @@ class WorkerFactory extends Factory
             'phone'=> $this->faker->phoneNumber,
             'email' => $this->faker->unique->email,
             'personnel_number' => $this->faker->numberBetween([100900, 101000]),
-           // 'job_position_id' => JobPosition::all()->random()->id,
+           // 'position_id' => Position::all()->random()->id,
            // 'department_id' => Department::all()->random()->id,
            // 'unit_id' => Unit::all()->random()->id,
             'birthday' => $this->faker->date('Y-m-d'),

@@ -77,6 +77,14 @@ class DepartmentResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('Name'))
                     ->sortable(),
+                Tables\Columns\TextColumn::make('workers_count')
+                    ->counts('workers')
+                    ->label(__('Workers'))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('positions_count')
+                    ->counts('positions')
+                    ->label(__('Positions'))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('manager.last_name')
                     ->label(__('Manager'))
                     ->sortable()
@@ -130,7 +138,7 @@ class DepartmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\JobPositionsRelationManager::class,
+            RelationManagers\PositionsRelationManager::class,
             RelationManagers\WorkersRelationManager::class,
         ];
     }

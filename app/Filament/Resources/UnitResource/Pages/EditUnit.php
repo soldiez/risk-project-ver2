@@ -21,4 +21,12 @@ class EditUnit extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            UnitResource\Widgets\UnitOverview::class,
+        ];
+    }
+
+
 }

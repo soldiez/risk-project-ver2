@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
-class JobPosition extends Model
+class Position extends Model
 {
     use HasFactory;
     // asSource, Filterable;
@@ -41,12 +41,12 @@ class JobPosition extends Model
         'status'
     ];
 
-    protected $table = 'job_positions';
+    protected $table = 'positions';
 
     //Relationships for unit
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(JobPosition::class);
+        return $this->belongsTo(Position::class);
     }
     public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -71,11 +71,11 @@ class JobPosition extends Model
     }
     public function unitManager(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(JobPosition::class);
+        return $this->hasOne(Position::class);
     }
     public function safetyManager(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(JobPosition::class);
+        return $this->hasOne(Position::class);
     }
 
 }

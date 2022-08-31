@@ -71,7 +71,7 @@ class Territory extends Model
         return $this->belongsTo(Territory::class, 'parent_id');
     }
     public function responsible(){
-        return $this->belongsTo(JobPosition::class, 'responsible_id');
+        return $this->belongsTo(Position::class, 'responsible_id');
     }
 
     public function territories(){

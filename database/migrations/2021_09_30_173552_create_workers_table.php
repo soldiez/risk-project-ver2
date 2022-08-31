@@ -21,7 +21,7 @@ class CreateWorkersTable extends Migration
             $table->string('phone')->nullable();
             $table->string('email')->unique();
             $table->string('personnel_number')->unique()->nullable();
-            $table->foreignId('job_position_id')->nullable();
+            $table->foreignId('position_id')->nullable();
             $table->foreignId('department_id')->nullable();
             $table->foreignId('unit_id')->nullable();
             $table->date('birthday')->nullable();

@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use Illuminate\Database\Seeder;
 
-class JobPositionSeeder extends Seeder
+class PositionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,7 @@ class JobPositionSeeder extends Seeder
     public function run()
     {
         //
-        JobPosition::factory()
+        Position::factory()
             ->count(20)
             ->create();
     }

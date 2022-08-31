@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\JobPositionResource\Pages;
+namespace App\Filament\Resources\PositionResource\Pages;
 
-use App\Filament\Resources\JobPositionResource;
+use App\Filament\Resources\PositionResource;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditJobPosition extends EditRecord
+class EditPosition extends EditRecord
 {
-    protected static string $resource = JobPositionResource::class;
+    protected static string $resource = PositionResource::class;
 
     protected function getActions(): array
     {

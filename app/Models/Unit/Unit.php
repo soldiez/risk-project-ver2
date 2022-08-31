@@ -71,17 +71,17 @@ class Unit extends Model
     {
         return $this->hasMany(Department::class);
     }
-    public function jobPositions(){
-        return $this->hasMany(JobPosition::class);
+    public function positions(){
+        return $this->hasMany(Position::class);
     }
     public function workers(){
         return $this->hasMany(Worker::class);
     }
     public function manager(){
-        return $this->belongsTo(JobPosition::class, 'manager_id');
+        return $this->belongsTo(Position::class, 'manager_id');
     }
     public function safetyManager(){
-        return $this->belongsTo(JobPosition::class, 'safety_manager_id');
+        return $this->belongsTo(Position::class, 'safety_manager_id');
     }
 
     //Relationships for risks
@@ -93,7 +93,7 @@ class Unit extends Model
         static::deleting(function($unit) { // before delete() method call this
             $unit->departments()->delete();
             $unit->territories()->delete();
-            $unit->jobPositions()->delete();
+            $unit->positions()->delete();
             $unit->workers()->delete();
         });
     }

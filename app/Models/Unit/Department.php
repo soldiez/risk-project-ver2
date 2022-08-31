@@ -55,11 +55,11 @@ class Department extends Model
         return $this->belongsTo(Unit::class);
     }
     public function manager(){
-        return $this->belongsTo(JobPosition::class);
+        return $this->belongsTo(Position::class);
     }
 
-    public function jobPositions(){
-        return $this->hasMany(JobPosition::class);
+    public function positions(){
+        return $this->hasMany(Position::class);
     }
     public function workers(){
         return $this->hasMany(Worker::class);

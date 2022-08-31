@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\UnitResource\RelationManagers;
 
 use App\Models\Unit\Department;
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use App\Models\Unit\Unit;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -13,9 +13,9 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class JobPositionsRelationManager extends RelationManager
+class PositionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'jobPositions';
+    protected static string $relationship = 'positions';
 
     protected static ?string $recordTitleAttribute = 'short_name';
 
@@ -35,9 +35,9 @@ class JobPositionsRelationManager extends RelationManager
                     ->reactive()
                     ->options(function (callable $get){ //do not choice by myself
                         if($get('name') != NULL) {
-                            return JobPosition::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
+                            return Position::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
                         }
-                        return JobPosition::all()->pluck('name', 'id');
+                        return Position::all()->pluck('name', 'id');
                     })
                     ->searchable()
                     ->label(__('Parent'))

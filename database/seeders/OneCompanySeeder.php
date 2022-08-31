@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Unit\Department;
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use App\Models\Unit\Territory;
 use App\Models\Unit\Unit;
 use App\Models\Unit\Worker;
@@ -32,7 +32,7 @@ class OneCompanySeeder extends Seeder
         $department = Department::factory()
             ->for($unit)
             ->count(rand(3,7))
-            ->has(JobPosition::factory()
+            ->has(Position::factory()
                 ->for($unit)
                 ->count(rand(2,6))
                 ->has(Worker::factory() //TODO department id

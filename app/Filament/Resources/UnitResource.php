@@ -4,9 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UnitResource\Pages;
 use App\Filament\Resources\UnitResource\RelationManagers;
+use App\Filament\Resources\UnitResource\Widgets\UnitOverview;
+use App\Models\Unit\Department;
 use App\Models\Unit\Unit;
 use App\Models\Unit\Worker;
 use Filament\Forms;
+use Filament\Forms\Components\Card;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
@@ -29,7 +32,6 @@ class UnitResource extends Resource
     {
         return $form
             ->schema([
-
                 Forms\Components\TextInput::make('short_name')
                     ->required()
                     ->label(__('Short Name')),
@@ -184,7 +186,7 @@ class UnitResource extends Resource
         return [
             RelationManagers\TerritoriesRelationManager::class,
                 RelationManagers\DepartmentsRelationManager::class,
-                RelationManagers\JobPositionsRelationManager::class,
+                RelationManagers\PositionsRelationManager::class,
                 RelationManagers\WorkersRelationManager::class,
         ];
     }
@@ -200,5 +202,11 @@ class UnitResource extends Resource
     protected static function getNavigationBadge(): ?string
     {
         return static::getModel()::count()-1;
+    }
+    public static function getWidgets(): array
+    {
+        return [
+            UnitOverview::class,
+        ];
     }
 }

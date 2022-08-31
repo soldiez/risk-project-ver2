@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\JobPositionResource\Pages;
-use App\Filament\Resources\JobPositionResource\RelationManagers;
+use App\Filament\Resources\PositionResource\Pages;
+use App\Filament\Resources\PositionResource\RelationManagers;
 use App\Models\Unit\Department;
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use App\Models\Unit\Unit;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -15,13 +15,13 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class JobPositionResource extends Resource
+class PositionResource extends Resource
 {
-    protected static ?string $model = JobPosition::class;
+    protected static ?string $model = Position::class;
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Units management';
-    protected static ?string $label = 'Job Position';
-    protected static ?string $pluralLabel = 'Job Positions';
+    protected static ?string $label = 'Position';
+    protected static ?string $pluralLabel = 'Positions';
     protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
@@ -41,9 +41,9 @@ class JobPositionResource extends Resource
                     ->reactive()
                     ->options(function (callable $get){ //do not choice by myself
                         if($get('name') != NULL) {
-                            return JobPosition::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
+                            return Position::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
                         }
-                        return JobPosition::all()->pluck('name', 'id');
+                        return Position::all()->pluck('name', 'id');
                     })
                     ->searchable()
                     ->label(__('Parent'))
@@ -114,7 +114,7 @@ class JobPositionResource extends Resource
                 Tables\Filters\SelectFilter::make(__('Parent'))
                     ->options(
                         function (){
-                            return JobPosition::whereIn('id', JobPosition::get('parent_id'))->pluck('name', 'id');
+                            return Position::whereIn('id', Position::get('parent_id'))->pluck('name', 'id');
                         })
                     ->column('parent_id'),
             ])
@@ -140,9 +140,9 @@ class JobPositionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListJobPositions::route('/'),
-            'create' => Pages\CreateJobPosition::route('/create'),
-            'edit' => Pages\EditJobPosition::route('/{record}/edit'),
+            'index' => Pages\ListPositions::route('/'),
+            'create' => Pages\CreatePosition::route('/create'),
+            'edit' => Pages\EditPosition::route('/{record}/edit'),
         ];
     }
     protected static function getNavigationBadge(): ?string

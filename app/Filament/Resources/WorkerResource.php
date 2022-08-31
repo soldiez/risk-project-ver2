@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\WorkerResource\Pages;
 use App\Filament\Resources\WorkerResource\RelationManagers;
 use App\Models\Unit\Department;
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use App\Models\Unit\Unit;
 use App\Models\Unit\Worker;
 use Filament\Forms;
@@ -59,28 +59,23 @@ class WorkerResource extends Resource
                         Forms\Components\Select::make('department_id')
                             ->label(__('Department'))
                             ->options(Department::all()->pluck('name', 'id')),
-                        Forms\Components\Select::make('job_position_id')
+                        Forms\Components\Select::make('position_id')
                             ->label(__('Job position'))
-                            ->options(JobPosition::all()->pluck('name', 'id')),
+                            ->options(Position::all()->pluck('name', 'id')),
                     ])->columns(3),
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\TextInput::make('personnel_number')
-                            ->label(__('Number'))
-                            ->unique(),
+                            ->label(__('Number')),
                         Forms\Components\TextInput::make('phone')
                             ->label(__('Phone'))
-                            ->unique()
                             ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('+3{8}(000)000-00-00')),
                         Forms\Components\TextInput::make('email')
                             ->label(__('Email'))
-                            ->unique()
                             ->email(),
                     ])->columns(3),
-
                 Forms\Components\DatePicker::make('birthday')
-                    ->label(__('Birthday'))
-                    ,
+                    ->label(__('Birthday')),
                 Forms\Components\Select::make('status')
                     ->options([
                         'Active' => 'Active',
@@ -123,7 +118,7 @@ class WorkerResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('jobPosition.name')
+                Tables\Columns\TextColumn::make('position.name')
                     ->label(__('Job position'))
                     ->sortable()
                     ->toggleable(),
@@ -170,12 +165,12 @@ class WorkerResource extends Resource
                         })
                     ->column('department_id')
                 ,
-                Tables\Filters\SelectFilter::make(__('JobPosition'))
+                Tables\Filters\SelectFilter::make(__('Position'))
                     ->options(
                         function (){
-                            return JobPosition::whereIn('id', Worker::get('job_position_id'))->pluck('name', 'id');
+                            return Position::whereIn('id', Worker::get('position_id'))->pluck('name', 'id');
                         })
-                    ->column('job_position_id'),
+                    ->column('position_id'),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\JobPositionResource\RelationManagers;
+namespace App\Filament\Resources\PositionResource\RelationManagers;
 
 use App\Models\Unit\Department;
-use App\Models\Unit\JobPosition;
+use App\Models\Unit\Position;
 use App\Models\Unit\Unit;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -41,9 +41,9 @@ class WorkersRelationManager extends RelationManager
                         Forms\Components\Select::make('department_id')
                             ->label(__('Department'))
                             ->options(Department::all()->pluck('name', 'id')),
-                        Forms\Components\Select::make('job_position_id')
+                        Forms\Components\Select::make('position_id')
                             ->label(__('Job position'))
-                            ->options(JobPosition::all()->pluck('name', 'id')),
+                            ->options(Position::all()->pluck('name', 'id')),
                     ])->columns(3),
                 Forms\Components\Fieldset::make('')
                     ->schema([
@@ -105,7 +105,7 @@ class WorkersRelationManager extends RelationManager
                     ->searchable()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('jobPosition.name')
+                Tables\Columns\TextColumn::make('position.name')
                     ->label(__('Job position'))
                     ->sortable()
                     ->toggleable(),
