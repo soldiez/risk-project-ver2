@@ -25,6 +25,7 @@ return new class extends Migration
             $table->text('legal_address')->nullable();
             $table->text('post_address')->nullable();
             $table->foreignId('parent_id')->nullable();
+            $table->foreignId('default_risk_method_id')->nullable(); //default risk method Id
             $table->string('status')->nullable();
             $table->binary('logo_unit')->nullable();
             $table->timestamps();

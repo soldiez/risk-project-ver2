@@ -3,6 +3,7 @@
 namespace App\Models\Unit;
 
 use App\Models\Risk\Risk;
+use App\Models\Risk\RiskMethod;
 use App\Models\Unit\Department;
 use App\Models\Unit\Territory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,7 @@ class Unit extends Model
         'legal_address',
         'post_address',
         'parent_id',
+        'default_risk_method_id',
         'status',
         'logo_unit'
     ];
@@ -41,6 +43,7 @@ class Unit extends Model
         'legal_address',
         'post_address',
         'parent_id',
+        'default_risk_method_id',
         'status'
     ];
 
@@ -56,6 +59,7 @@ class Unit extends Model
         'legal_address',
         'post_address',
         'parent_id',
+        'default_risk_method_id',
         'status'
     ];
     protected $table = 'units';
@@ -64,6 +68,10 @@ class Unit extends Model
     public function parent(){
         return $this->belongsTo(Unit::class, 'parent_id');
     }
+    public function units(){
+        return $this->hasMany(Unit::class);
+    }
+
     public function territories(){
         return $this->hasMany(Territory::class);
     }
@@ -77,6 +85,17 @@ class Unit extends Model
     public function workers(){
         return $this->hasMany(Worker::class);
     }
+    public function processes(){
+        return $this->hasMany(Process::class);
+    }
+    public function products(){
+        return $this->hasMany(Product::class);
+    }
+    public function services(){
+        return $this->hasMany(Service::class);
+    }
+
+
     public function manager(){
         return $this->belongsTo(Position::class, 'manager_id');
     }
@@ -85,6 +104,17 @@ class Unit extends Model
     }
 
     //Relationships for risks
+    public function risks(){
+        return $this->hasMany(Risk::class);
+    }
+
+    public function riskMethods(){
+        return $this->belongsToMany(RiskMethod::class, 'risk_method_unit');
+    }
+
+    public function defaultRiskMethod(){
+        return $this->belongsTo(RiskMethod::class, 'default_risk_method_id');
+    }
 
 //delete child contain
     public static function boot() {
@@ -95,6 +125,9 @@ class Unit extends Model
             $unit->territories()->delete();
             $unit->positions()->delete();
             $unit->workers()->delete();
+            $unit->processes()->delete();
+            $unit->products()->delete();
+            $unit->services()->delete();
         });
     }
 

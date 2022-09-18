@@ -25,7 +25,6 @@ class CreateTerritoriesTable extends Migration
             $table->text('info')->nullable();
             $table->string('status')->nullable();
             $table->foreignId('parent_id')->nullable();
-         //   NestedSet::columns($table);
             $table->timestamps();
         });
 

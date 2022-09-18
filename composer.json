@@ -6,7 +6,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "3x1io/filament-user": "^1.1",
         "barryvdh/laravel-debugbar": "^3.7",
+        "bezhansalleh/filament-shield": "^2.2",
         "doctrine/dbal": "^3.4",
         "filament/filament": "^2.0",
         "guzzlehttp/guzzle": "^7.2",

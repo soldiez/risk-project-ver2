@@ -1,0 +1,138 @@
+[
+    {
+        "type": "Safety",
+        "name": "Spills on floors or tripping hazards such as blocked aisles or cords running across the floor"
+    },
+    {
+        "type": "Safety",
+        "name": "Working from heights including ladders, scaffolds, roofs, or any raised work area"
+    },
+    {
+        "type": "Safety",
+        "name": "Unguarded machinery and moving machinery parts; guards removed or moving parts that a worker can accidentally touch"
+    },
+    {
+        "type": "Safety",
+        "name": "Electrical hazards like frayed cords, missing ground pins, improper wiring"
+    },
+    {
+        "type": "Safety",
+        "name": "Confined spaces"
+    },
+    {
+        "type": "Safety",
+        "name": "Machinery-related hazards (lockout\/tagout, boiler safety, forklifts, etc.)"
+    },
+    {
+        "type": "Biological",
+        "name": "Blood and other body fluids"
+    },
+    {
+        "type": "Biological",
+        "name": "Fungi\/mold"
+    },
+    {
+        "type": "Biological",
+        "name": "Bacteria and viruses"
+    },
+    {
+        "type": "Biological",
+        "name": "Insect bites"
+    },
+    {
+        "type": "Biological",
+        "name": "Animal and bird droppings"
+    },
+    {
+        "type": "Chemical",
+        "name": "Liquids like cleaning products, paints, acids, solvents – especially if chemicals are in an unlabeled container"
+    },
+    {
+        "type": "Chemical",
+        "name": "Vapors and fumes that come from welding or exposure to solvents"
+    },
+    {
+        "type": "Chemical",
+        "name": "Gases like acetylene, propane, carbon monoxide, and helium"
+    },
+    {
+        "type": "Chemical",
+        "name": "Flammable materials like gasoline, solvents, and explosive chemicals"
+    },
+    {
+        "type": "Chemical",
+        "name": "Pesticides"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Improperly adjusted workstations and chairs"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Frequent lifting"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Poor posture"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Awkward movements, especially if they are repetitive"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Repeating the same movements over and over"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Having to frequently use too much force"
+    },
+    {
+        "type": "Ergonomic",
+        "name": "Vibration"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Workload demands"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Workplace violence"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Intensity and\/or pace"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Respect (or lack of)"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Flexibility\/Control or say about things"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Social support\/relations"
+    },
+    {
+        "type": "Work Organization",
+        "name": "Sexual harassment"
+    },
+    {
+        "type": "Physical",
+        "name": "Radiation: including ionizing, non-ionizing (EMF’s, microwaves, radio waves, etc.)"
+    },
+    {
+        "type": "Physical",
+        "name": "Prolonged exposure to sunlight\/ultraviolet rays"
+    },
+    {
+        "type": "Physical",
+        "name": "Temperature extremes – hot and cold"
+    },
+    {
+        "type": "Physical",
+        "name": "Constant loud noise"
+    }
+]

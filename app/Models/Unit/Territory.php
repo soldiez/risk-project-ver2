@@ -16,7 +16,7 @@ class Territory extends Model
    // use asSource, Filterable;
 
     protected $attributes = [
-        'status' => 'Active',
+        'status' => 'Active'
     ];
 
     protected $fillable = [
@@ -76,6 +76,20 @@ class Territory extends Model
 
     public function territories(){
         return $this->hasMany(Territory::class);
+    }
+
+    public function departments(){
+        return $this->belongsToMany(Department::class, 'department_territory');
+    }
+
+    public function processes(){
+        return $this->belongsToMany(Process::class, 'activity_unit');
+    }
+    public function products(){
+        return $this->belongsToMany(Product::class, 'activity_unit');
+    }
+    public function services(){
+        return $this->belongsToMany(Service::class, 'activity_unit');
     }
 
 

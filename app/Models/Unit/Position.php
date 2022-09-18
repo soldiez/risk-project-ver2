@@ -46,8 +46,12 @@ class Position extends Model
     //Relationships for unit
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Position::class, 'parent_id');
     }
+    public function positions(){
+        return $this->hasMany(Position::class);
+    }
+
     public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Department::class);
@@ -60,7 +64,16 @@ class Position extends Model
     {
         return $this->hasMany(Worker::class);
     }
-    //TODO think about one or many relationship for method bellow
+    public function processes(){
+        return $this->belongsToMany(Process::class, 'activity_unit');
+    }
+    public function products(){
+        return $this->belongsToMany(Product::class, 'activity_unit');
+    }
+    public function services(){
+        return $this->belongsToMany(Service::class, 'activity_unit');
+    }
+
     public function territoryResponsible(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Territory::class);

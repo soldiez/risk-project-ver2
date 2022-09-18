@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UnitResource extends Resource
 {
+
     protected static ?string $model = Unit::class;
     protected static ?string $navigationIcon = 'heroicon-o-office-building';
     protected static ?string $navigationGroup = 'Units management';
@@ -79,6 +80,9 @@ class UnitResource extends Resource
                             ->label(__('Safety manager'))
                             ->options(Worker::all()->pluck('last_name', 'id')),
                     ]),
+                Forms\Components\Select::make('defaultRiskMethod')
+                        ->label(__('Defaul risk method'))
+                        ->relationship('defaultRiskMethod', 'name'),
                 Forms\Components\Select::make('status')
                     ->options([
                         'Active' => 'Active',
@@ -139,6 +143,10 @@ class UnitResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('parent.name')
                     ->label(__('Parent'))
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('defaultRiskMethod.name')
+                    ->label(__('Risk Method'))
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')

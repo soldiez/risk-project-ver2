@@ -41,7 +41,7 @@ class PositionResource extends Resource
                     ->reactive()
                     ->options(function (callable $get){ //do not choice by myself
                         if($get('name') != NULL) {
-                            return Position::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
+                            return Position::where('name', '!=', $get('name'))->pluck('name', 'id');
                         }
                         return Position::all()->pluck('name', 'id');
                     })
@@ -98,20 +98,24 @@ class PositionResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created'))
+                    ->date('d-m-Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated'))
+                    ->date('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true)
 
             ])
             ->filters([
 
-                Tables\Filters\SelectFilter::make(__('Unit'))
+                Tables\Filters\SelectFilter::make('unit')
+                    ->label(__('Unit'))
                     ->relationship('unit', 'name'),
 
                 Tables\Filters\SelectFilter::make(__('Parent'))
+                    ->label(__('Parent'))
                     ->options(
                         function (){
                             return Position::whereIn('id', Position::get('parent_id'))->pluck('name', 'id');

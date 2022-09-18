@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class WorkerResource extends Resource
 {
     protected static ?string $model = Worker::class;
-
+//TODO import|export data for units
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Units management';
     protected static ?string $navigationLabel = 'Workers';

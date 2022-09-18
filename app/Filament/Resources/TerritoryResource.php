@@ -12,6 +12,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class TerritoryResource extends Resource
@@ -30,21 +31,24 @@ class TerritoryResource extends Resource
         return $form
             ->schema([
 
-                Forms\Components\Select::make('unit_id')
-                    ->options(Unit::all()->pluck('name', 'id'))
-                    ->searchable()
+                Forms\Components\Select::make('unit')
+                    ->relationship('unit', 'name')
+//                    ->options(Unit::all()->pluck('name', 'id'))
+//                    ->searchable()
                     ->label(__('Unit')),
-                Forms\Components\Select::make('parent_id')
+                Forms\Components\Select::make('parent')
                     ->reactive()
-                    ->options(function (callable $get){ //do not choice by myself //TODO for same name for diff unit
+//                        ->relationship('parent', 'name')
+
+
+                    ->options(function (callable $get){
                         if($get('name') != NULL) {
                             return Territory::where('name', '!=', $get('name'))->pluck('name', 'id');
                         }
                         return Territory::all()->pluck('name', 'id');
                     })
-                    ->searchable()
-                    ->label(__('Parent'))
-                    ->default(1),
+//                    ->searchable()
+                    ->label(__('Parent')),
                 Forms\Components\TextInput::make('name')
                     ->label(__('Name')),
                 Forms\Components\Select::make('responsible_id')
@@ -117,25 +121,28 @@ class TerritoryResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created'))
-                    ->dateTime('d-m-Y')
+                    ->date('d-m-Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated'))
-                    ->dateTime('d-m-Y')
+                    ->date('d-m-Y')
                     ->hidden()
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make(__('Unit'))
+                Tables\Filters\SelectFilter::make('unit')
+                    ->label(__('Unit'))
                     ->relationship('unit', 'name'),
 
-                Tables\Filters\SelectFilter::make(__('Parent'))
+                Tables\Filters\SelectFilter::make('parent')
+                    ->label(__('Parent'))
                     ->options(
                         function (){
                            return Territory::whereIn('id', Territory::get('parent_id'))->pluck('name', 'id');
                         })
-                    ->column('parent_id'),
+                    ->column('parent_id')
+                ,
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

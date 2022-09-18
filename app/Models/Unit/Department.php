@@ -44,7 +44,7 @@ class Department extends Model
     //Relationships for department
     public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'parent_id');
     }
     public function departments(){
         return $this->hasMany(Department::class);
@@ -67,6 +67,17 @@ class Department extends Model
     public function territories(){
         return $this->belongsToMany(Territory::class, 'department_territory');
     }
+    public function processes(){
+        return $this->belongsToMany(Process::class, 'activity_unit');
+    }
+    public function products(){
+        return $this->belongsToMany(Product::class, 'activity_unit');
+    }
+    public function services(){
+        return $this->belongsToMany(Service::class, 'activity_unit');
+    }
+
+
     //Relationships for risks
 
 //    public function risks(){

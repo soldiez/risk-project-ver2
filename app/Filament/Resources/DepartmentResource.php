@@ -37,7 +37,7 @@ class DepartmentResource extends Resource
                     ->reactive()
                     ->options(function (callable $get){ //do not choice by myself
                         if($get('name') != NULL) {
-                            return Department::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
+                            return Department::where('name', '!=', $get('name'))->pluck('name', 'id');
                         }
                         return Department::all()->pluck('name', 'id');
                     })
@@ -100,28 +100,30 @@ class DepartmentResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created'))
-                    ->dateTime('d-m-Y H:i')
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated'))
-                    ->dateTime('d-m-Y H:i')
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
 
-                Tables\Filters\SelectFilter::make(__('Unit'))
+                Tables\Filters\SelectFilter::make('unit')
+                    ->label(__('Unit'))
                     ->relationship('unit', 'name'),
 
                 Tables\Filters\SelectFilter::make(__('Parent'))
-                    ->relationship('parent', 'name')
-//                    ->options(
-//                        function (){
-//                            return Department::whereIn('id', Department::get('parent_id'))->pluck('name', 'id');
-//                        })
-//                    ->column('parent_id')
+                    ->label(__('Parent'))
+                    ->options(
+                        function (){
+                            return Department::whereIn('id', Department::get('parent_id'))->pluck('name', 'id');
+                        })
+                    ->column('parent_id')
                 ,
+
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

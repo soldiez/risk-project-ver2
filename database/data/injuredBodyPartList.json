@@ -1,0 +1,250 @@
+[
+ {
+  "code": 100,
+  "name": "Head -  not specified"
+ },
+ {
+  "code": 110,
+  "name": "Brain"
+ },
+ {
+  "code": 120,
+  "name": "Ear - not specified"
+ },
+ {
+  "code": 121,
+  "name": "Ear - external"
+ },
+ {
+  "code": 124,
+  "name": "Ear - internal including hearing"
+ },
+ {
+  "code": 130,
+  "name": "Eye -  including optic nerves and vision"
+ },
+ {
+  "code": 140,
+  "name": "Face - not specified"
+ },
+ {
+  "code": 141,
+  "name": "Jaw - including chin and mandible"
+ },
+ {
+  "code": 144,
+  "name": "Mouth - including lips, tongue, throat and taste"
+ },
+ {
+  "code": 145,
+  "name": "Teeth"
+ },
+ {
+  "code": 146,
+  "name": "Nose - including nasal passages, sinus and smell"
+ },
+ {
+  "code": 148,
+  "name": "Face - multiple parts any combination of above parts"
+ },
+ {
+  "code": 149,
+  "name": "Face - forehead, cheeks, eyelids"
+ },
+ {
+  "code": 150,
+  "name": "Scalp"
+ },
+ {
+  "code": 160,
+  "name": "Skull"
+ },
+ {
+  "code": 198,
+  "name": "Head -  multiple injury any combination of above parts"
+ },
+ {
+  "code": 200,
+  "name": "Neck"
+ },
+ {
+  "code": 300,
+  "name": "Upper extremities - not specified"
+ },
+ {
+  "code": 310,
+  "name": "Arm -  above wrist not specified"
+ },
+ {
+  "code": 311,
+  "name": "Arm -  upper arm humerus"
+ },
+ {
+  "code": 313,
+  "name": "Arm -  elbow head of radius"
+ },
+ {
+  "code": 315,
+  "name": "Arm -  forearm radius and ulna"
+ },
+ {
+  "code": 318,
+  "name": "Arm -  multiple parts any combination of above parts"
+ },
+ {
+  "code": 319,
+  "name": "Arm -  not specified"
+ },
+ {
+  "code": 320,
+  "name": "Wrist"
+ },
+ {
+  "code": 330,
+  "name": "Hand -  not wrist or fingers"
+ },
+ {
+  "code": 340,
+  "name": "Fingers"
+ },
+ {
+  "code": 398,
+  "name": "Upper extremities - multiple parts any combination of above parts"
+ },
+ {
+  "code": 400,
+  "name": "Trunk - not specified"
+ },
+ {
+  "code": 410,
+  "name": "Abdomen - including internal organs and groin"
+ },
+ {
+  "code": 411,
+  "name": "Hernia"
+ },
+ {
+  "code": 420,
+  "name": "Back - including back muscles, spine and spinal cord"
+ },
+ {
+  "code": 430,
+  "name": "Chest - including ribs, breast bone and internal organs of the chest"
+ },
+ {
+  "code": 440,
+  "name": "Hips - including pelvis, pelvic organs, tailbone, coccyx and buttocks"
+ },
+ {
+  "code": 450,
+  "name": "Shoulders - scapula and clavicle"
+ },
+ {
+  "code": 498,
+  "name": "Trunk - use for side; multiple parts any combination of above parts"
+ },
+ {
+  "code": 500,
+  "name": "Lower extremities - not specified"
+ },
+ {
+  "code": 510,
+  "name": "Legs -  above ankles, not specified"
+ },
+ {
+  "code": 511,
+  "name": "Thigh femur"
+ },
+ {
+  "code": 513,
+  "name": "Knee Patella"
+ },
+ {
+  "code": 515,
+  "name": "Lower leg tibia and fibula"
+ },
+ {
+  "code": 518,
+  "name": "Leg - multiple parts any combination of above parts"
+ },
+ {
+  "code": 519,
+  "name": "Leg - not specified"
+ },
+ {
+  "code": 520,
+  "name": "Ankle malleolus"
+ },
+ {
+  "code": 530,
+  "name": "Foot not ankle or toe"
+ },
+ {
+  "code": 540,
+  "name": "Toes"
+ },
+ {
+  "code": 598,
+  "name": "Lower extremities - multiple parts any combination of above parts"
+ },
+ {
+  "code": 700,
+  "name": "Multiple parts more than five major parts use only in fifth position of listing of body parts"
+ },
+ {
+  "code": 800,
+  "name": "Body system - not specific"
+ },
+ {
+  "code": 801,
+  "name": "Circulatory system -  heart -  other than heart attack, blood, arteries, veins, etc."
+ },
+ {
+  "code": 802,
+  "name": "Circulatory system -  Heart attack"
+ },
+ {
+  "code": 810,
+  "name": "Digestive system - stomach"
+ },
+ {
+  "code": 820,
+  "name": "Excretory system - kidneys, bladder, intestines, etc."
+ },
+ {
+  "code": 830,
+  "name": "Musculo-skeletal system - bones, joints, tendons, muscles, etc."
+ },
+ {
+  "code": 840,
+  "name": "Nervous system - not specified"
+ },
+ {
+  "code": 841,
+  "name": "Nervous system - Stress"
+ },
+ {
+  "code": 842,
+  "name": "Nervous system - Psychiatric\/psych"
+ },
+ {
+  "code": 850,
+  "name": "Respiratory system -  lungs, trachea, etc."
+ },
+ {
+  "code": 860,
+  "name": "Skin dermatitis, etc."
+ },
+ {
+  "code": 870,
+  "name": "Reproductive systems"
+ },
+ {
+  "code": 880,
+  "name": "Other body systems"
+ },
+ {
+  "code": 999,
+  "name": "Unclassified -  insufficient information to identify body parts"
+ }
+]

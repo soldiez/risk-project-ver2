@@ -62,6 +62,19 @@ class Worker extends Model
     public function unit(){
         return $this->belongsTo(Unit::class);
     }
+    public function processes(){
+        return $this->belongsToMany(Process::class, 'activity_unit');
+    }
+    public function products(){
+        return $this->belongsToMany(Product::class, 'activity_unit');
+    }
+    public function services(){
+        return $this->belongsToMany(Service::class, 'activity_unit');
+    }
+
+
+
+
     public function fullName(): string
     {
         return $this->last_name . ' ' . $this->first_name . ' ' . $this->middle_name;
