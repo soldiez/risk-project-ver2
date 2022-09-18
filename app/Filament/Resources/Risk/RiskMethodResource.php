@@ -34,10 +34,11 @@ class RiskMethodResource extends Resource
                 TextInput::make('name')
                     ->label(__('Name'))
                     ->required(),
-                Forms\Components\Select::make('unit')
-                    ->relationship('unit', 'name')
-                    ->label(__('Default for Unit'))
-                    ->helperText(__('Choice the Unit where this Risk Method will be as default choice')), //TODO save default risk method to unit
+                Forms\Components\MultiSelect::make('units')
+                    ->relationship('units', 'name')
+                    ->label(__('Using in units'))
+                    ->helperText(__('Unit where this Risk Method is default choice'))
+                    ,
                 Forms\Components\Toggle::make('is_risk_calculated')
                     ->label(__('Risk is calculating by formula - multiple elements '))
                     ->helperText(__('In this case all parameters will be multiply. In other case it will be on crossroads of parameters'))

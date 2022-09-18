@@ -64,7 +64,7 @@ return new class extends Migration
             $table->foreignId('risk_method_id');
             $table->string('name');
             $table->string('sort')->nullable();
-            $table->string('value')->nullable();
+            $table->integer('value')->nullable();
             $table->text('info')->nullable();
             $table->timestamps();
         });
@@ -74,7 +74,7 @@ return new class extends Migration
             $table->foreignId('risk_method_id');
             $table->string('name');
             $table->string('sort')->nullable();
-            $table->string('value')->nullable();
+            $table->integer('value')->nullable();
             $table->text('info')->nullable();
             $table->timestamps();
         });
@@ -84,7 +84,7 @@ return new class extends Migration
             $table->foreignId('risk_method_id');
             $table->string('name');
             $table->string('sort')->nullable();
-            $table->string('value')->nullable();
+            $table->integer('value')->nullable();
             $table->text('info')->nullable();
             $table->timestamps();
         });
@@ -94,11 +94,12 @@ return new class extends Migration
             $table->foreignId('risk_method_id');
             $table->string('name');
             $table->string('sort')->nullable();
-            $table->string('value')->nullable();
+            $table->integer('value')->nullable();
             $table->string('colour')->nullable();
             $table->text('info')->nullable();
             $table->foreignId('risk_severity_id')->nullable();
             $table->foreignId('risk_probability_id')->nullable();
+            $table->foreignId('risk_frequency_id')->nullable();
             $table->timestamps();
         });
 

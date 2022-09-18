@@ -135,6 +135,7 @@ class OneCompanySeeder extends Seeder
         $this->call([
            RiskMethod3x3Seeder::class,
            RiskMethod5x5Seeder::class,
+           RiskMethod5x5CalculatedSeeder::class,
            HazardCategorySeeder::class,
            InjuredBodyPartSeeder::class,
         ]);

@@ -26,25 +26,25 @@ class RiskMethod3x3Seeder extends Seeder
             'is_risk_frequency' => 0
         ];
         $riskSeverityList = [
-            ['name' => 'Minor injury', 'sort'=> 1, 'value'=> '', 'info' => 'Little injury'],
-            ['name' => 'Major injury', 'sort'=> 2, 'value'=> '', 'info' => 'Seriously injury'],
-            ['name' => 'Death', 'sort'=> 3, 'value'=> '', 'info' => 'Death and very serious injury']
+            ['name' => 'Minor injury', 'sort'=> 1, 'info' => 'Little injury'],
+            ['name' => 'Major injury', 'sort'=> 2, 'info' => 'Seriously injury'],
+            ['name' => 'Death', 'sort'=> 3, 'info' => 'Death and very serious injury']
         ];
         $riskProbabilityList = [
-            ['name' => 'Almost certain', 'sort'=> 1, 'value'=> '', 'info' => 'Less then one per week'],
-            ['name' => 'Quite likely', 'sort'=> 2, 'value'=> '', 'info' => 'Less then one per month'],
-            ['name' => 'Not very likely', 'sort'=> 3, 'value'=> '', 'info' => 'Less then one per year']
+            ['name' => 'Almost certain', 'sort'=> 1, 'info' => 'Less then one per week'],
+            ['name' => 'Quite likely', 'sort'=> 2, 'info' => 'Less then one per month'],
+            ['name' => 'Not very likely', 'sort'=> 3, 'info' => 'Less then one per year']
         ];
         $riskZonesList = [
-            ['name' => 'Manage', 'value' => '', 'colour' => 'yellow', 'info' => ''],
-            ['name' => 'Monitor', 'value' => '', 'colour' => 'green', 'info' => ''],
-            ['name' => 'Monitor', 'value' => '', 'colour' => 'green', 'info' => ''],
-            ['name' => 'Take action', 'value' => '', 'colour' => 'red', 'info' => ''],
-            ['name' => 'Manage', 'value' => '', 'colour' => 'yellow', 'info' => ''],
-            ['name' => 'Monitor', 'value' => '', 'colour' => 'green', 'info' => ''],
-            ['name' => 'Take action', 'value' => '', 'colour' => 'red', 'info' => ''],
-            ['name' => 'Take action', 'value' => '', 'colour' => 'red', 'info' => ''],
-            ['name' => 'Manage', 'value' => '', 'colour' => 'yellow', 'info' => '']
+            ['name' => 'Manage', 'colour' => 'yellow', 'info' => ''],
+            ['name' => 'Monitor', 'colour' => 'green', 'info' => ''],
+            ['name' => 'Monitor', 'colour' => 'green', 'info' => ''],
+            ['name' => 'Take action', 'colour' => 'red', 'info' => ''],
+            ['name' => 'Manage', 'colour' => 'yellow', 'info' => ''],
+            ['name' => 'Monitor', 'colour' => 'green', 'info' => ''],
+            ['name' => 'Take action', 'colour' => 'red', 'info' => ''],
+            ['name' => 'Take action', 'colour' => 'red', 'info' => ''],
+            ['name' => 'Manage', 'colour' => 'yellow', 'info' => '']
         ];
 
         $riskMethod = RiskMethod::factory($riskMethodList)->create();

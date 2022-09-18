@@ -5,7 +5,10 @@ namespace App\Filament\Resources\Risk;
 use App\Filament\Resources\Risk\RiskResource\Pages;
 use App\Filament\Resources\Risk\RiskResource\RelationManagers;
 use App\Models\Risk\Risk;
+use App\Models\Risk\RiskFrequency;
 use App\Models\Risk\RiskMethod;
+use App\Models\Risk\RiskProbability;
+use App\Models\Risk\RiskSeverity;
 use App\Models\Risk\RiskZone;
 use App\Models\Unit\Unit;
 use App\Models\User;
@@ -123,34 +126,52 @@ Forms\Components\Fieldset::make('Base risk')
                 Forms\Components\Select::make('base_severity_id')
                     ->label(__('Severity'))
                     ->relationship('baseSeverity', 'name',
-                        function (Builder $query, $livewire) {
-                        return $query->where('risk_method_id', $livewire->data['risk_method_id']);})
+                        function (Builder $query, $get) {
+//                        return $query->where('risk_method_id', $livewire->data['risk_method_id']);})
+                    return $query->where('risk_method_id', $get('../../risk_method_id'));})
                     ->reactive(),
                 Forms\Components\Select::make('base_probability_id')
                     ->label(__('Probability'))
                     ->relationship('baseProbability', 'name',
-                        fn (Builder $query, $livewire) => $query->where('risk_method_id', $livewire->data['risk_method_id']))
+                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                     ->reactive(),
                 Forms\Components\Select::make('base_frequency_id')
                     ->label(__('Frequency'))
                     ->relationship('baseFrequency', 'name',
-                        fn (Builder $query, $livewire) => $query->where('risk_method_id', $livewire->data['risk_method_id']))
+                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                     ->reactive()
-                    ->visible(fn($livewire) => RiskMethod::find($livewire->data['risk_method_id'])->is_risk_frequency)
+                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
                 ,
-
                 Forms\Components\Placeholder::make('base_calc_risk')
                     ->label(__('Risk'))
-                    ->content(function ($livewire, $get, $set) {
+                    ->content(function ($get, $set) {
                         $baseSeverityId = $get('base_severity_id');
                         $baseProbabilityId = $get('base_probability_id');
+                        $baseFrequencyId = $get('base_frequency_id');
+                        $riskMethod = RiskMethod::find($get('../../risk_method_id'));
 
-                        if($baseProbabilityId & $baseSeverityId) {
-                            $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
-                            $set('base_calc_risk', $riskZone->id);
-                            return $riskZone->name; //TODO color
-                        } //TODO for calculating risk and copy to prop disk
-                            return '-';
+                            if($riskMethod->is_risk_calculated === 0) {
+                                if ($baseSeverityId && $baseProbabilityId) {
+                                    $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
+                                    $set('base_calc_risk', $riskZone->id);
+                                    return $riskZone->name;} //TODO color
+                                }
+                            if($riskMethod->is_risk_calculated === 1) {
+                                if ($riskMethod->is_risk_frequency === 1 && $baseSeverityId && $baseProbabilityId && $baseFrequencyId) {
+                                    $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value *
+                                        RiskFrequency::find($baseFrequencyId)->value;
+                                    $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
+                                    $set('base_calc_risk', $riskZone->id);
+                                    return $riskZone->name;}
+
+                                if($riskMethod->is_risk_frequency === 0 && $baseSeverityId && $baseProbabilityId) {
+                                    $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value;
+                                    $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
+                                    $set('base_calc_risk', $riskZone->id);
+                                    return $riskZone->name;
+                                } //TODO color
+                                }
+                        return '-';
                     })
                 ,
 
@@ -160,40 +181,56 @@ Forms\Components\Fieldset::make('Base risk')
                         Forms\Components\Fieldset::make('Proposition risk')
                             ->label(__('Proposition risk'))
                             ->schema([
-
                                 Forms\Components\TextInput::make('prop_preventive_action')
                                     ->label(__('Proposition preventive action'))
                                 ->columnSpan(4),
-
                                 Forms\Components\Select::make('prop_severity_id')
                                     ->label(__('Severity'))
                                     ->relationship('propSeverity', 'name',
-                                        fn (Builder $query, $livewire) => $query->where('risk_method_id', $livewire->data['risk_method_id']))
+                                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive(),
                                 Forms\Components\Select::make('prop_probability_id')
                                     ->label(__('Probability'))
                                     ->relationship('propProbability', 'name',
-                                        fn (Builder $query, $livewire) => $query->where('risk_method_id', $livewire->data['risk_method_id']))
+                                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive(),
                                 Forms\Components\Select::make('prop_frequency_id')
                                     ->label(__('Frequency'))
                                     ->relationship('propFrequency', 'name',
-                                        fn (Builder $query, $livewire) => $query->where('risk_method_id', $livewire->data['risk_method_id']))
+                                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive()
-                                    ->visible(fn($livewire) => RiskMethod::find($livewire->data['risk_method_id'])->is_risk_frequency)
+                                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
                                 ,
 
                                 Forms\Components\Placeholder::make('prop_calc_risk')
                                     ->label(__('Risk'))
-                                    ->content(function ($livewire, $get, $set) {
+                                    ->content(function ($get, $set) {
                                         $propSeverityId = $get('prop_severity_id');
                                         $propProbabilityId = $get('prop_probability_id');
+                                        $propFrequencyId = $get('prop_frequency_id');
+                                        $riskMethod = RiskMethod::find($get('../../risk_method_id'));
 
-                                        if($propProbabilityId & $propSeverityId) {
-                                            $riskZone = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first();
-                                            $set('prop_calc_risk', $riskZone->id);
-                                            return $riskZone->name; //TODO color
-                                        } //TODO for calculating risk
+                                        if($riskMethod->is_risk_calculated === 0) {
+                                            if ($propSeverityId && $propProbabilityId) {
+                                                $riskZone = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first();
+                                                $set('prop_calc_risk', $riskZone->id);
+                                                return $riskZone->name;} //TODO color
+                                        }
+                                        if($riskMethod->is_risk_calculated === 1) {
+                                            if ($riskMethod->is_risk_frequency === 1 && $propSeverityId && $propProbabilityId && $propFrequencyId) {
+                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value *
+                                                    RiskFrequency::find($propFrequencyId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;}
+
+                                            if($riskMethod->is_risk_frequency === 0 && $propSeverityId && $propProbabilityId) {
+                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
                                         return '-';
                                     }),
 
@@ -219,10 +256,10 @@ Forms\Components\Fieldset::make('Base risk')
 //                        'Archive',
 //                    ])
                     ])->defaultItems(1)
-                    ->maxItems(3)
+                    ->maxItems(10)
                     ->columns(6)
                     ->columnSpan(2)
-                    ->createItemButtonLabel('Add risk'),
+                    ->createItemButtonLabel(__('Add risk')),
 
                //TODO actions_id process
             ]);
