@@ -24,7 +24,6 @@ class Territory extends Model
         'name',
         'unit_id',
         'responsible_id',
-        'department_id',
         'coordinate',
         'address',
         'info',
@@ -38,7 +37,6 @@ class Territory extends Model
         'name',
         'unit_id',
         'responsible_id',
-        'department_id',
         'coordinate',
         'address',
         'status',
@@ -51,7 +49,6 @@ class Territory extends Model
         'name',
         'unit_id',
         'responsible_id',
-        'department_id',
         'coordinate',
         'address',
         'status',
@@ -95,9 +92,9 @@ class Territory extends Model
 
     //Relationships for Risks
 
-//    public function risks(){
-//        return $this->belongsToMany(Risk::class);
-//    }
+    public function risks(){
+        return $this->belongsToMany(Risk::class);
+    }
 //
 //    Public function children(){
 //        return $this->hasMany(Territory::class);

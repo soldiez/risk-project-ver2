@@ -105,7 +105,7 @@ class Risk extends Model
         return $this->belongsTo(Unit::class);
     }
     public function territories(){
-        return $this->belongsToMany(Territory::class);
+        return $this->belongsToMany(Territory::class, 'risk_territory');
     }
     public function departments(){
         return $this->belongsToMany(Department::class);
@@ -124,7 +124,7 @@ class Risk extends Model
     }
 
     public function authors(){ //Authors of risks
-        return $this->belongsToMany(Worker::class);
+        return $this->belongsToMany(Worker::class, 'author_risk');
     }
 
     public function creator(){

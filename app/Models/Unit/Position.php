@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Risk\Risk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -90,5 +91,11 @@ class Position extends Model
     {
         return $this->hasOne(Position::class);
     }
+
+    public function risks(){
+        return $this->belongsToMany(Risk::class);
+    }
+
+
 
 }

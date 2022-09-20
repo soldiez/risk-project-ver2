@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Risk\Risk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -80,9 +81,9 @@ class Department extends Model
 
     //Relationships for risks
 
-//    public function risks(){
-//        return $this->hasMany(Risk::class);
-//    }
+    public function risks(){
+        return $this->belongsToMany(Risk::class);
+    }
 
 
 }

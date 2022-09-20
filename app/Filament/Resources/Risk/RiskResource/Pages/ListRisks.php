@@ -17,8 +17,13 @@ class ListRisks extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-    protected function getTableFiltersLayout(): ?string
+//    protected function getTableFiltersLayout(): ?string
+//    {
+//        return Layout::Popover;
+//    }
+
+    protected function getTableFiltersFormColumns(): int
     {
-        return Layout::AboveContent;
+        return 2;
     }
 }

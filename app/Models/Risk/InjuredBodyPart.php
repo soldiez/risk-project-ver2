@@ -28,4 +28,8 @@ class InjuredBodyPart extends Model
     ];
 
     protected $table = 'injured_body_parts';
+
+    public function risks() {
+        return $this->hasMany(Risk::class, 'injured_body_part_id');
+    }
 }

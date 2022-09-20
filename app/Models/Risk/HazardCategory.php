@@ -29,4 +29,8 @@ class HazardCategory extends Model
 
     protected $table = 'hazard_categories';
 
+    public function risks() {
+        return $this->hasMany(Risk::class, 'hazard_category_id');
+    }
+
 }

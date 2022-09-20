@@ -20,7 +20,6 @@ class CreateDepartmentsTable extends Migration
             $table->foreignId('unit_id')->nullable();
             $table->text('name');
             $table->foreignId('manager_id')->nullable();
-          //  $table->foreignId('territory_id')->nullable();
             $table->text('info')->nullable();
             $table->string('status')->nullable();
          //   NestedSet::columns($table);

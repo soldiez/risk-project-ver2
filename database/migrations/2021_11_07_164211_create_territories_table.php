@@ -19,7 +19,6 @@ class CreateTerritoriesTable extends Migration
             $table->foreignId('unit_id')->nullable();
             $table->text('name');
             $table->foreignId('responsible_id')->nullable();
-           // $table->foreignId('department_id')->nullable();
             $table->text('coordinate')->nullable();
             $table->text('address')->nullable();
             $table->text('info')->nullable();

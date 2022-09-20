@@ -20,6 +20,7 @@ use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 use mysql_xdevapi\Schema;
 
@@ -80,6 +81,7 @@ class RiskResource extends Resource
                             ->label(__('Risk method'))
                             ->relationship('riskMethod', 'name')
                             ->reactive()
+                            ->required()
                             ->default(fn($get) => Unit::find($get('unit_id'))->defaultRiskMethod->id),
                         Forms\Components\Placeholder::make('creator_id')
                             ->label(__('Record creator'))
@@ -87,7 +89,6 @@ class RiskResource extends Resource
                                 $set('creator_id', auth()->user()->id);
                                 return auth()->user()->name;})
                     ])->columns(6),
-
 
                 Forms\Components\Repeater::make('risks')
                     ->label(__('Risks'))
@@ -116,88 +117,90 @@ class RiskResource extends Resource
                             ->label(__('Controller'))
                             ->relationship('auditor', 'name'), //TODO user from group auditors
 
-Forms\Components\Fieldset::make('Base risk')
-            ->label(__('Base risk'))
-            ->schema([
-                Forms\Components\TextInput::make('base_preventive_action')
-                    ->label(__('Base preventive action'))
-                    ->columnSpan(4),
+                        Forms\Components\Fieldset::make('Base risk')
+                            ->label(__('Base risk'))
+                            ->schema([
+                                Forms\Components\TextInput::make('base_preventive_action')
+                                    ->label(__('Base preventive action'))
+                                    ->columnSpan(4),
 
-                Forms\Components\Select::make('base_severity_id')
-                    ->label(__('Severity'))
-                    ->relationship('baseSeverity', 'name',
-                        function (Builder $query, $get) {
-//                        return $query->where('risk_method_id', $livewire->data['risk_method_id']);})
-                    return $query->where('risk_method_id', $get('../../risk_method_id'));})
-                    ->reactive(),
-                Forms\Components\Select::make('base_probability_id')
-                    ->label(__('Probability'))
-                    ->relationship('baseProbability', 'name',
-                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
-                    ->reactive(),
-                Forms\Components\Select::make('base_frequency_id')
-                    ->label(__('Frequency'))
-                    ->relationship('baseFrequency', 'name',
-                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
-                    ->reactive()
-                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
-                ,
-                Forms\Components\Placeholder::make('base_calc_risk')
-                    ->label(__('Risk'))
-                    ->content(function ($get, $set) {
-                        $baseSeverityId = $get('base_severity_id');
-                        $baseProbabilityId = $get('base_probability_id');
-                        $baseFrequencyId = $get('base_frequency_id');
-                        $riskMethod = RiskMethod::find($get('../../risk_method_id'));
+                                Forms\Components\Select::make('base_severity_id')
+                                    ->label(__('Severity'))
+                                    ->relationship('baseSeverity', 'name',
+                                        function (Builder $query, $get) {
+                                            return $query->where('risk_method_id', $get('../../risk_method_id'));
+                                        })
+                                    ->reactive(),
+                                Forms\Components\Select::make('base_probability_id')
+                                    ->label(__('Probability'))
+                                    ->relationship('baseProbability', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
+                                    ->reactive(),
+                                Forms\Components\Select::make('base_frequency_id')
+                                    ->label(__('Frequency'))
+                                    ->relationship('baseFrequency', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
+                                    ->reactive()
+                                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
+                                ,
+                                Forms\Components\Placeholder::make('base_calc_risk')
+                                    ->label(__('Risk'))
+                                    ->content(function ($get, $set) {
+                                        $baseSeverityId = $get('base_severity_id');
+                                        $baseProbabilityId = $get('base_probability_id');
+                                        $baseFrequencyId = $get('base_frequency_id');
+                                        $riskMethod = RiskMethod::find($get('../../risk_method_id'));
 
-                            if($riskMethod->is_risk_calculated === 0) {
-                                if ($baseSeverityId && $baseProbabilityId) {
-                                    $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
-                                    $set('base_calc_risk', $riskZone->id);
-                                    return $riskZone->name;} //TODO color
-                                }
-                            if($riskMethod->is_risk_calculated === 1) {
-                                if ($riskMethod->is_risk_frequency === 1 && $baseSeverityId && $baseProbabilityId && $baseFrequencyId) {
-                                    $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value *
-                                        RiskFrequency::find($baseFrequencyId)->value;
-                                    $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
-                                    $set('base_calc_risk', $riskZone->id);
-                                    return $riskZone->name;}
+                                        if ($riskMethod->is_risk_calculated === 0) {
+                                            if ($baseSeverityId && $baseProbabilityId) {
+                                                $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
+                                        if ($riskMethod->is_risk_calculated === 1) {
+                                            if ($riskMethod->is_risk_frequency === 1 && $baseSeverityId && $baseProbabilityId && $baseFrequencyId) {
+                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value *
+                                                    RiskFrequency::find($baseFrequencyId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            }
 
-                                if($riskMethod->is_risk_frequency === 0 && $baseSeverityId && $baseProbabilityId) {
-                                    $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value;
-                                    $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
-                                    $set('base_calc_risk', $riskZone->id);
-                                    return $riskZone->name;
-                                } //TODO color
-                                }
-                        return '-';
-                    })
-                ,
+                                            if ($riskMethod->is_risk_frequency === 0 && $baseSeverityId && $baseProbabilityId) {
+                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
+                                        return '-';
+                                    })
+                                ,
 
-            ])->columnSpan(3)
-                        ->columns(4),
+                            ])->columnSpan(3)
+                            ->columns(4),
 
                         Forms\Components\Fieldset::make('Proposition risk')
                             ->label(__('Proposition risk'))
                             ->schema([
                                 Forms\Components\TextInput::make('prop_preventive_action')
                                     ->label(__('Proposition preventive action'))
-                                ->columnSpan(4),
+                                    ->columnSpan(4),
                                 Forms\Components\Select::make('prop_severity_id')
                                     ->label(__('Severity'))
                                     ->relationship('propSeverity', 'name',
-                                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive(),
                                 Forms\Components\Select::make('prop_probability_id')
                                     ->label(__('Probability'))
                                     ->relationship('propProbability', 'name',
-                                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive(),
                                 Forms\Components\Select::make('prop_frequency_id')
                                     ->label(__('Frequency'))
                                     ->relationship('propFrequency', 'name',
-                                        fn (Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive()
                                     ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
                                 ,
@@ -210,23 +213,184 @@ Forms\Components\Fieldset::make('Base risk')
                                         $propFrequencyId = $get('prop_frequency_id');
                                         $riskMethod = RiskMethod::find($get('../../risk_method_id'));
 
-                                        if($riskMethod->is_risk_calculated === 0) {
+                                        if ($riskMethod->is_risk_calculated === 0) {
                                             if ($propSeverityId && $propProbabilityId) {
                                                 $riskZone = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first();
                                                 $set('prop_calc_risk', $riskZone->id);
-                                                return $riskZone->name;} //TODO color
+                                                return $riskZone->name;
+                                            } //TODO color
                                         }
-                                        if($riskMethod->is_risk_calculated === 1) {
+                                        if ($riskMethod->is_risk_calculated === 1) {
                                             if ($riskMethod->is_risk_frequency === 1 && $propSeverityId && $propProbabilityId && $propFrequencyId) {
                                                 $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value *
                                                     RiskFrequency::find($propFrequencyId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
                                                 $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;}
+                                                return $riskZone->name;
+                                            }
 
-                                            if($riskMethod->is_risk_frequency === 0 && $propSeverityId && $propProbabilityId) {
+                                            if ($riskMethod->is_risk_frequency === 0 && $propSeverityId && $propProbabilityId) {
                                                 $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value' , '>=', $calculation)->first();
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
+                                        return '-';
+                                    }),
+                            ])->columnSpan(3)
+                            ->columns(4),
+                    ])->defaultItems(1)
+                    ->maxItems(10)
+                    ->columns(6)
+                    ->columnSpan(2)
+                    ->createItemButtonLabel(__('Add risk')
+
+                    )->visibleOn('create'),
+
+
+                Forms\Components\Fieldset::make('risk')
+                    ->label(__('Risk'))
+                    ->schema([
+                        Forms\Components\TextInput::make('hazard_info')
+                            ->label(__('Hazard information'))
+                            ->columnSpan(3),
+                        Forms\Components\TextInput::make('base_risk_info')
+                            ->label(__('Base Risk Information'))
+                            ->columnSpan(3),
+
+                        Forms\Components\Select::make('hazard_category_id')
+                            ->label(__('Hazard category'))
+                            ->relationship('hazardCategory', 'name'),
+
+                        Forms\Components\Select::make('injured_body_part_id')
+                            ->label(__('Injured body part'))
+                            ->relationship('injuredBodyPart', 'name'),
+
+                        Forms\Components\DatePicker::make('review_date')
+                            ->label(__('Review date'))
+                            ->withoutSeconds()
+                            ->minDate(now()), //TODO Date from settings
+
+                        Forms\Components\Select::make('auditor_id')
+                            ->label(__('Controller'))
+                            ->relationship('auditor', 'name'), //TODO user from group auditors
+
+                        Forms\Components\Fieldset::make('Base risk')
+                            ->label(__('Base risk'))
+                            ->schema([
+                                Forms\Components\TextInput::make('base_preventive_action')
+                                    ->label(__('Base preventive action'))
+                                    ->columnSpan(4),
+
+                                Forms\Components\Select::make('base_severity_id')
+                                    ->label(__('Severity'))
+                                    ->relationship('baseSeverity', 'name',
+                                        function (Builder $query, $get) {
+                                            return $query->where('risk_method_id', $get('risk_method_id'));
+                                        })
+                                    ->reactive(),
+                                Forms\Components\Select::make('base_probability_id')
+                                    ->label(__('Probability'))
+                                    ->relationship('baseProbability', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('risk_method_id')))
+                                    ->reactive(),
+                                Forms\Components\Select::make('base_frequency_id')
+                                    ->label(__('Frequency'))
+                                    ->relationship('baseFrequency', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('risk_method_id')))
+                                    ->reactive()
+                                    ->visible(fn($get) => RiskMethod::find($get('risk_method_id'))->is_risk_frequency)
+                                ,
+                                Forms\Components\Placeholder::make('base_calc_risk')
+                                    ->label(__('Risk'))
+                                    ->content(function ($get, $set) {
+                                        $baseSeverityId = $get('base_severity_id');
+                                        $baseProbabilityId = $get('base_probability_id');
+                                        $baseFrequencyId = $get('base_frequency_id');
+                                        $riskMethod = RiskMethod::find($get('risk_method_id'));
+
+                                        if ($riskMethod->is_risk_calculated === 0) {
+                                            if ($baseSeverityId && $baseProbabilityId) {
+                                                $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
+                                        if ($riskMethod->is_risk_calculated === 1) {
+                                            if ($riskMethod->is_risk_frequency === 1 && $baseSeverityId && $baseProbabilityId && $baseFrequencyId) {
+                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value *
+                                                    RiskFrequency::find($baseFrequencyId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            }
+
+                                            if ($riskMethod->is_risk_frequency === 0 && $baseSeverityId && $baseProbabilityId) {
+                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
+                                        return '-';
+                                    })
+                                ,
+
+                            ])->columnSpan(3)
+                            ->columns(4),
+
+                        Forms\Components\Fieldset::make('Proposition risk')
+                            ->label(__('Proposition risk'))
+                            ->schema([
+                                Forms\Components\TextInput::make('prop_preventive_action')
+                                    ->label(__('Proposition preventive action'))
+                                    ->columnSpan(4),
+                                Forms\Components\Select::make('prop_severity_id')
+                                    ->label(__('Severity'))
+                                    ->relationship('propSeverity', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('risk_method_id')))
+                                    ->reactive(),
+                                Forms\Components\Select::make('prop_probability_id')
+                                    ->label(__('Probability'))
+                                    ->relationship('propProbability', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('risk_method_id')))
+                                    ->reactive(),
+                                Forms\Components\Select::make('prop_frequency_id')
+                                    ->label(__('Frequency'))
+                                    ->relationship('propFrequency', 'name',
+                                        fn(Builder $query, $get) => $query->where('risk_method_id', $get('risk_method_id')))
+                                    ->reactive()
+                                    ->visible(fn($get) => RiskMethod::find($get('risk_method_id'))->is_risk_frequency)
+                                ,
+
+                                Forms\Components\Placeholder::make('prop_calc_risk')
+                                    ->label(__('Risk'))
+                                    ->content(function ($get, $set) {
+                                        $propSeverityId = $get('prop_severity_id');
+                                        $propProbabilityId = $get('prop_probability_id');
+                                        $propFrequencyId = $get('prop_frequency_id');
+                                        $riskMethod = RiskMethod::find($get('risk_method_id'));
+
+                                        if ($riskMethod->is_risk_calculated === 0) {
+                                            if ($propSeverityId && $propProbabilityId) {
+                                                $riskZone = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first();
+                                                $set('prop_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            } //TODO color
+                                        }
+                                        if ($riskMethod->is_risk_calculated === 1) {
+                                            if ($riskMethod->is_risk_frequency === 1 && $propSeverityId && $propProbabilityId && $propFrequencyId) {
+                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value *
+                                                    RiskFrequency::find($propFrequencyId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
+                                                $set('base_calc_risk', $riskZone->id);
+                                                return $riskZone->name;
+                                            }
+
+                                            if ($riskMethod->is_risk_frequency === 0 && $propSeverityId && $propProbabilityId) {
+                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value;
+                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
                                                 $set('base_calc_risk', $riskZone->id);
                                                 return $riskZone->name;
                                             } //TODO color
@@ -235,35 +399,29 @@ Forms\Components\Fieldset::make('Base risk')
                                     }),
 
                             ])->columnSpan(3)
-                        ->columns(4),
+                            ->columns(4),
+                    ])
 
-
-
-
-
-
-//                Forms\Components\DatePicker::make('control_review_date')
-//                    ->label(__('Reviewed date'))
-//                    ->withoutSeconds(),
-//
-//                Forms\Components\Select::make('risk_status') //TODO risk statuses thinking
-//                    ->label(__('Risk status'))
-//                    ->options([
-//                        'Created',
-//                        'Has Actions',
-//                        'Action closed',
-//                        'Reviewed',
-//                        'Archive',
-//                    ])
-                    ])->defaultItems(1)
-                    ->maxItems(10)
                     ->columns(6)
                     ->columnSpan(2)
-                    ->createItemButtonLabel(__('Add risk')),
+                    ->visibleOn('edit'),
 
-               //TODO actions_id process
+                //TODO actions_id process
+
+
+
+
+
+
+
+                //TODO actions_id process
             ]);
+
+
     }
+
+
+
 
     public static function table(Table $table): Table
     {
@@ -441,7 +599,7 @@ Forms\Components\Fieldset::make('Base risk')
                 Tables\Columns\TextColumn::make('creator/date')
                     ->label(__('Creator/Date'))
                     ->formatStateUsing(function ($record) {
-                        $name = $record->creator->name;
+                        $name = $record->creator->name ?? __('None');
                         $date = date_create($record->create_date_time);
                         return  new HtmlString($name . '<br>' . date_format($date, 'd-m-Y')) ;
                     })
@@ -464,7 +622,7 @@ Forms\Components\Fieldset::make('Base risk')
                 Tables\Columns\TextColumn::make('auditor/date')
                     ->label(__('Reviewer/PlanDate'))
                     ->formatStateUsing(function ($record) {
-                        $name = $record->auditor->name;
+                        $name = $record->auditor->name ?? __('None');
                         $date = date_create($record->review_date);
                         return  new HtmlString($name . '<br>' . date_format($date, 'd-m-Y')) ;
                     })
@@ -505,47 +663,35 @@ Forms\Components\Fieldset::make('Base risk')
 //                    ->toggleable(),
 
 
-
             ])
             ->filters([
-                //TODO filters for risk resource
-
-                Tables\Filters\SelectFilter::make('unit')
+                Tables\Filters\SelectFilter::make('unit') //TODO filters for user^: my risks, my positions risk, departments, etc.
                     ->label(__('Unit'))
-                    ->relationship('unit', 'name'),
+                    ->relationship('unit', 'name', fn(Builder $query) => $query->whereHas('risks')), //TODO dependands filters
                 Tables\Filters\MultiSelectFilter::make('territories')
                     ->label(__('Territories'))
-                    ->relationship('territories', 'name'),
+                    ->relationship('territories', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('departments')
                     ->label(__('Departments'))
-                    ->relationship('departments', 'name'),
+                    ->relationship('departments', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('positions')
                     ->label(__('Positions'))
-                    ->relationship('positions', 'name'),
-
-
+                    ->relationship('positions', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('hazardCategories')
                     ->label(__('Hazard categories'))
-                    ->relationship('hazardCategory', 'name'),
+                    ->relationship('hazardCategory', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('injuredBodyParts')
                     ->label(__('Injured body parts'))
-                    ->relationship('injuredBodyPart', 'name'),
-
-
+                    ->relationship('injuredBodyPart', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('processes')
                     ->label(__('Processes'))
-                    ->relationship('processes', 'name')
-                ,
+                    ->relationship('processes', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('products')
                     ->label(__('Products'))
-                    ->relationship('products', 'name')
-                ,
+                    ->relationship('products', 'name', fn(Builder $query) => $query->whereHas('risks')),
                 Tables\Filters\MultiSelectFilter::make('services')
                     ->label(__('Services'))
-                    ->relationship('services', 'name')
-                ,
-
-
+                    ->relationship('services', 'name', fn(Builder $query) => $query->whereHas('risks')),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -580,4 +726,5 @@ Forms\Components\Fieldset::make('Base risk')
     {
         return static::getModel()::count();
     }
+
 }

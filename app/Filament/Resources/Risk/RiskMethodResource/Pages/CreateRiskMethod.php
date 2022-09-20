@@ -9,4 +9,7 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateRiskMethod extends CreateRecord
 {
     protected static string $resource = RiskMethodResource::class;
+
 }
+
+
