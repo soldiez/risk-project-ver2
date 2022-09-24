@@ -16,25 +16,15 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class DepartmentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'departments';
-
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('unit_id')
-                    ->label(__('Unit'))
-                    ->searchable()
-                    ->options(Unit::all()->pluck('name', 'id')),
                 Forms\Components\Select::make('parent_id')
-                    ->reactive()
-                    ->options(function (callable $get){ //do not choice by myself
-                        if($get('name') != NULL) {
-                            return Department::where('name', '!=', $get('name'))->pluck('name', 'id'); //TODO for same name for diff unit
-                        }
-                        return Department::all()->pluck('name', 'id');
-                    })
+                    ->options(fn($livewire, $get)=>Unit::find($livewire->ownerRecord->id)
+                        ->departments->where('name', '!=', $get('name'))->pluck('name', 'id')->prepend('-', '1'))
                     ->searchable()
                     ->label(__('Parent'))
                     ->default(1),
@@ -43,7 +33,7 @@ class DepartmentsRelationManager extends RelationManager
                 Forms\Components\Select::make('manager_id')
                     ->label(__('Manager'))
                     ->searchable()
-                    ->options(Worker::all()->pluck('last_name', 'id')),
+                    ->relationship('manager', 'last_name'),
                 Forms\Components\TextInput::make('info')
                     ->label(__('Info')),
                 Forms\Components\Select::make('status')
@@ -61,10 +51,6 @@ class DepartmentsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('unit.name')
-                    ->label(__('Unit'))
-                    ->sortable()
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('parent.name')
                     ->label(__('Parent'))
                     ->sortable(),
@@ -78,7 +64,6 @@ class DepartmentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('info')
                     ->label(__('Info'))
                     ->limit(20)
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('Status'))
@@ -86,12 +71,12 @@ class DepartmentsRelationManager extends RelationManager
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created'))
-                    ->dateTime('d-m-Y H:i')
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated'))
-                    ->dateTime('d-m-Y H:i')
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

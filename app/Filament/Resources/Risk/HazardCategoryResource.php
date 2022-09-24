@@ -79,8 +79,5 @@ class HazardCategoryResource extends Resource
             'index' => Pages\ManageHazardCategories::route('/'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
+
 }

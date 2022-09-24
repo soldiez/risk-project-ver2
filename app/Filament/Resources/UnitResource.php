@@ -37,51 +37,55 @@ class UnitResource extends Resource
                     ->required()
                     ->label(__('Short Name')),
                 Forms\Components\TextInput::make('long_name')
-                    ->label(__('Full name')),
+                    ->label(__('Full name'))
+                    ->columnSpan(2),
+
+                Forms\Components\Select::make('parent_id')
+                    ->options(fn($livewire, $get)=>Unit::find($get('id'))
+                        ->where('name', '!=', $get('name'))->pluck('name', 'id')->prepend('-', '1'))
+                    ->searchable()
+                    ->label(__('Parent'))
+                    ->default(1)
+                    ->label(__('Parent unit')),
                 Forms\Components\FileUpload::make('logo_unit')
                     ->label(__('Logo'))
                     ->image()
                     ->imagePreviewHeight('100')
                     ->maxSize(2048),
-                Forms\Components\Select::make('parent_id')
-                    ->reactive()
-                    ->options(function (callable $get){ //do not choice by myself
-                        if($get('name') != NULL) {
-                            return Unit::where('name', '!=', $get('name'))->pluck('name', 'id');
-                        }
-                        return Unit::all()->pluck('name', 'id');
-                    })
-                    ->searchable()
-                    ->label(__('Parent'))
-                    ->default(1)
-                    ->searchable()
-                    ->label(__('Parent unit')),
-                Forms\Components\TextArea::make('legal_address')
-                    ->label(__('Legal address')),
-                Forms\Components\TextArea::make('post_address')
-                    ->label(__('Post address')),
-                Forms\Components\TextInput::make('phone_main')
-                    ->label(__('Phone'))
-                    ->tel()
-                    ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('+3{8}(000)000-00-00')),
-                Forms\Components\TextInput::make('phone_reserve')
-                    ->label(__('Reserve phone'))
-                    ->tel()
-                    ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('+3{8}(000)000-00-00')),
-                Forms\Components\TextInput::make('email')
-                    ->label(__('Email'))
-                    ->email(),
-                Forms\Components\Fieldset::make('')
+                Forms\Components\Fieldset::make('contacts')
+                    ->label(__('Contacts'))
                     ->schema([
+                        Forms\Components\TextArea::make('legal_address')
+                            ->label(__('Legal address'))
+                            ->rows(2)
+                        ->columnSpan(2),
+                        Forms\Components\TextArea::make('post_address')
+                            ->label(__('Post address'))
+                        ->rows(2)
+                        ->columnSpan(2),
+                        Forms\Components\TextInput::make('phone_main')
+                            ->label(__('Phone'))
+                            ->tel()
+                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('+3{8}(000)000-00-00')),
+                        Forms\Components\TextInput::make('phone_reserve')
+                            ->label(__('Reserve phone'))
+                            ->tel()
+                            ->mask(fn (Forms\Components\TextInput\Mask $mask) => $mask->pattern('+3{8}(000)000-00-00')),
+                        Forms\Components\TextInput::make('email')
+                            ->label(__('Email'))
+                            ->email(),
+                    ])->columns(4),
+
+
                         Forms\Components\Select::make('manager_id')
                             ->label(__('Manager'))
-                            ->options(Worker::all()->pluck('last_name', 'id')),
+                            ->relationship('manager', 'last_name'),
                         Forms\Components\Select::make('safety_manager_id')
                             ->label(__('Safety manager'))
-                            ->options(Worker::all()->pluck('last_name', 'id')),
-                    ]),
+                            ->relationship('safetyManager', 'last_name'),
+
                 Forms\Components\Select::make('defaultRiskMethod')
-                        ->label(__('Defaul risk method'))
+                        ->label(__('Default risk method'))
                         ->relationship('defaultRiskMethod', 'name'),
                 Forms\Components\Select::make('status')
                     ->options([
@@ -91,7 +95,7 @@ class UnitResource extends Resource
                     ->default('Active')
                     ->label(__('Status'))
                     ->disablePlaceholderSelection(),
-            ]);
+            ])->columns(4);
     }
 
     public static function table(Table $table): Table
@@ -165,9 +169,10 @@ class UnitResource extends Resource
             ])
             ->filters([
                 //
-                Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->options(Unit::all()->pluck('name', 'id'))
-                    ->column('id'),
+//                Tables\Filters\SelectFilter::make(__('Unit'))
+//                    ->options(Unit::all()->pluck('name', 'id'))
+////                    ->column('id')
+//                ,
                 Tables\Filters\SelectFilter::make(__('Parent'))
                     ->options(
                         function (){
@@ -207,14 +212,11 @@ class UnitResource extends Resource
             'edit' => Pages\EditUnit::route('/{record}/edit'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count()-1;
-    }
-    public static function getWidgets(): array
-    {
-        return [
-            UnitOverview::class,
-        ];
-    }
+
+//    public static function getWidgets(): array
+//    {
+//        return [
+//            UnitOverview::class,
+//        ];
+//    }
 }

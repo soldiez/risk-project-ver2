@@ -6,57 +6,63 @@ use App\Models\Risk\Risk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Activity extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'id',
+        'parent_id',
         'unit_id',
+        'type',
         'name',
         'description',
-        'parent_id',
         'status',
     ];
     protected $allowedSorts = [
         'id',
+        'parent_id',
         'unit_id',
+        'type',
         'name',
         'description',
-        'parent_id',
         'status',
     ];
 
     protected $allowedFilters = [
         'id',
+        'parent_id',
         'unit_id',
+        'type',
         'name',
         'description',
-        'parent_id',
         'status',
     ];
-    protected $table = 'products';
+    protected $table = 'activities';
 
     public function unit(){
         return $this->belongsTo(Unit::class);
     }
     public function parent(){
-        return $this->belongsTo(Product::class, 'parent_id');
+        return $this->belongsTo(Activity::class, 'parent_id');
     }
     public function territories(){
-        return $this->belongsToMany(Territory::class, 'activity_unit');
+        return $this->belongsToMany(Territory::class);
     }
     public function departments()
     {
-        return $this->belongsToMany(Department::class, 'activity_unit');
+        return $this->belongsToMany(Department::class);
     }
     public function positions(){
-        return $this->belongsToMany(Position::class, 'activity_unit');
+        return $this->belongsToMany(Position::class);
     }
-    public function workers(){
-        return $this->belongsToMany(Worker::class, 'activity_unit');
-    }
+//    public function workers(){
+//        return $this->belongsToMany(Worker::class, 'activity_unit');
+//    }
     public function risks(){
-        return $this->belongsToMany(Risk::class, 'activity_unit');
+        return $this->belongsToMany(Risk::class);
     }
+
+
+
 }

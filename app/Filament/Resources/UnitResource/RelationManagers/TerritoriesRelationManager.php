@@ -5,12 +5,14 @@ namespace App\Filament\Resources\UnitResource\RelationManagers;
 use App\Models\Unit\Territory;
 use App\Models\Unit\Unit;
 use App\Models\Unit\Worker;
+use Closure;
 use Filament\Forms;
 
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
+use http\QueryString;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TerritoriesRelationManager extends RelationManager
@@ -22,40 +24,32 @@ class TerritoriesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-
-                Forms\Components\Select::make('unit_id')
-                    ->options(Unit::all()->pluck('name', 'id'))
-                    ->searchable()
-                    ->label(__('Unit')),
                 Forms\Components\Select::make('parent_id')
-                    ->reactive()
-                    ->options(function (callable $get){ //do not choice by myself
-                        if($get('name') != NULL) {
-                            return Territory::where('name', '!=', $get('name'))->pluck('name', 'id');
-                        }
-                        return Territory::all()->pluck('name', 'id');
-                    })
+                ->options(fn($livewire, $get)=>Unit::find($livewire->ownerRecord->id)
+                    ->territories->where('name', '!=', $get('name'))->pluck('name', 'id')->prepend('-', '1'))
                     ->searchable()
                     ->label(__('Parent'))
-                    ->default(1),
+                    ->default(1)
+                ,
                 Forms\Components\TextInput::make('name')
                     ->label(__('Name')),
-                Forms\Components\Select::make('responsible_id')
-                    ->label(__('Responsible person'))
-                    ->options(Worker::all()->pluck('last_name', 'id')),
-//                Forms\Components\Select::make('department_id')
-//                    ->label(__('Подразделение'))
-//                    ->options(Department::all()->pluck('name', 'id')),
-//               Forms\Components\Fieldset::make(__('Контакты'))
-//                   ->schema([
-//                   Forms\Components\TextInput::make('coordinate')
-//                       ->label(__('Координаты')),
-//                   Forms\Components\TextInput::make('address')
-//                       ->label(__('Адрес')),
-//                   Forms\Components\TextInput::make('info')
-//                       ->label(__('Информация')),
-//               ])->columns(3),
-
+                Forms\Components\MultiSelect::make('departments')
+                    ->label(__('Departments'))
+                    ->searchable()
+                    ->relationship('departments', 'name'),
+               Forms\Components\Fieldset::make('contacts')
+                   ->label(__('Contacts'))
+                   ->schema([
+                       Forms\Components\Select::make('responsible_id')
+                           ->label(__('Responsible person'))
+                           ->relationship('responsible', 'last_name'),
+                   Forms\Components\TextInput::make('coordinate')
+                       ->label(__('Coordinates')),
+                   Forms\Components\TextInput::make('address')
+                       ->label(__('Address')),
+                   Forms\Components\TextInput::make('info')
+                       ->label(__('Information')),
+               ])->columns(2),
                 Forms\Components\Select::make('status')
                     ->label(__('Status'))
                     ->options([
@@ -64,17 +58,13 @@ class TerritoriesRelationManager extends RelationManager
                     ])
                     ->default('Active')
                     ->disablePlaceholderSelection(),
-            ]);
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('unit.name')
-                    ->label(__('Unit'))
-                    ->sortable()
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('parent.name')
                     ->label(__('Parent'))
                     ->sortable()
@@ -86,11 +76,10 @@ class TerritoriesRelationManager extends RelationManager
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('responsible_id')
+                Tables\Columns\TextColumn::make('responsible.last_name')
                     ->label(__('Resp.person'))
                     ->sortable()
                     ->searchable()
-                    ->formatStateUsing(function ($state){if(Worker::find($state) !== null){return Worker::find($state)->last_name;} return '-';})
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('coordinate')
                     ->label(__('Coordinates'))

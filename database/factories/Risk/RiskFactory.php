@@ -26,18 +26,26 @@ class RiskFactory extends Factory
     {
 
 //        $unitId = Unit::all()->first()->id;
-        $riskMethodId = RiskMethod::all()->first()->id;
-        $baseSeverityId = RiskMethod::find($riskMethodId)->riskSeverities->random()->id;
-        $baseProbabilityId = RiskMethod::find($riskMethodId)->riskProbabilities->random()->id;
+
+        $riskMethod = RiskMethod::all()->first();
+        $riskMethodId = $riskMethod->id;
+        $baseSeverityId = $riskMethod->riskSeverities->random()->id;
+        $baseProbabilityId = $riskMethod->riskProbabilities->random()->id;
+        $propSeverityId = $riskMethod->riskSeverities->random()->id;
+        $propProbabilityId = $riskMethod->riskProbabilities->random()->id;
+
+
+        if($riskMethod->is_risk_frequency) {
+            $baseFrequencyId = $riskMethod->riskFrequencies->random()->id;
+            $propFrequencyId = $riskMethod->riskFrequencies->random()->id;
+        }
+
         $baseCalcRiskId = RiskZone::where('risk_severity_id',$baseSeverityId)->where('risk_probability_id',$baseProbabilityId)->first()->id;
-
-
-        $propSeverityId = RiskMethod::find($riskMethodId)->riskSeverities->random()->id;
-        $propProbabilityId = RiskMethod::find($riskMethodId)->riskProbabilities->random()->id;
         $propCalcRiskId = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first()->id;
 
+
         $one_year = new DateInterval('P1Y');
-        $createDate = $this->faker->dateTime;
+        $createDate = now();
         $reviewDate = $createDate->add($one_year);
 
 

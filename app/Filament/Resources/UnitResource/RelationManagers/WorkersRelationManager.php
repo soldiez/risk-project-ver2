@@ -16,14 +16,14 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class WorkersRelationManager extends RelationManager
 {
     protected static string $relationship = 'workers';
-
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Fieldset::make('')
+                Forms\Components\Fieldset::make('Name')
+                    ->label(__('Name'))
                     ->schema([
                         Forms\Components\TextInput::make('last_name')
                             ->label(__('Last name'))
@@ -34,19 +34,19 @@ class WorkersRelationManager extends RelationManager
                         Forms\Components\TextInput::make('middle_name')
                             ->label(__('Middle name')),
                     ])->columns(3),
-                Forms\Components\Fieldset::make('')
+                Forms\Components\Fieldset::make('unit_data')
+                    ->label(__('Unit data'))
                     ->schema([
-                        Forms\Components\Select::make('unit_id')
-                            ->label(__('Unit'))
-                            ->options(Unit::all()->pluck('name', 'id')),
                         Forms\Components\Select::make('department_id')
                             ->label(__('Department'))
-                            ->options(Department::all()->pluck('name', 'id')),
+                            ->options(fn($livewire)=>Unit::find($livewire->ownerRecord->id)->departments->pluck('name', 'id'))
+                            ,
                         Forms\Components\Select::make('position_id')
                             ->label(__('Position'))
-                            ->options(Position::all()->pluck('name', 'id')),
-                    ])->columns(3),
-                Forms\Components\Fieldset::make('')
+                            ->options(fn($livewire)=>Unit::find($livewire->ownerRecord->id)->positions->pluck('name', 'id')),
+                    ])->columns(2),
+                Forms\Components\Fieldset::make('contacts')
+                    ->label(__('Contacts'))
                     ->schema([
                         Forms\Components\TextInput::make('personnel_number')
                             ->label(__('Number'))
@@ -114,10 +114,6 @@ class WorkersRelationManager extends RelationManager
                     ->label(__('Department'))
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('unit.name')
-                    ->label(__('Unit'))
-                    ->sortable()
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('birthday')
                     ->label(__('Birthday'))
                     ->dateTime('d-m-Y')
@@ -129,22 +125,22 @@ class WorkersRelationManager extends RelationManager
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created'))
-                    ->dateTime('d-m-Y H:i')
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated'))
-                    ->dateTime('d-m-Y H:i')
+                    ->dateTime('d-m-Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make(__('Department'))
-                    ->options(Department::all()->pluck('name', 'id'))
-                    ->column('id'),
-                Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->options(Position::all()->pluck('name', 'id'))
-                    ->column('id'),
+                Tables\Filters\SelectFilter::make('department')
+                    ->label(__('Department'))
+                    ->relationship('department', 'name')
+//                    ->options(fn($livewire)=>Unit::find($livewire->ownerRecord->id)->departments->pluck('name', 'id'))
+//                    ->column('id')
+                ,
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),

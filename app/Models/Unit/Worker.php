@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Action;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Orchid\Screen\AsSource;
@@ -62,18 +63,13 @@ class Worker extends Model
     public function unit(){
         return $this->belongsTo(Unit::class);
     }
-    public function processes(){
-        return $this->belongsToMany(Process::class, 'activity_unit');
-    }
-    public function products(){
-        return $this->belongsToMany(Product::class, 'activity_unit');
-    }
-    public function services(){
-        return $this->belongsToMany(Service::class, 'activity_unit');
+    public function activities(){
+        return $this->belongsToMany(Activity::class);
     }
 
-
-
+    public function actions(){
+        return $this->belongsToMany(Action::class);
+    }
 
     public function fullName(): string
     {

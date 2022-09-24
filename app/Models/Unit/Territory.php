@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Action;
 use App\Models\Risk\Risk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -67,28 +68,28 @@ class Territory extends Model
     public function parent(){
         return $this->belongsTo(Territory::class, 'parent_id');
     }
-    public function responsible(){
-        return $this->belongsTo(Position::class, 'responsible_id');
+
+
+    public function children(){
+        return $this->hasMany(Territory::class, 'parent_id');
     }
 
-    public function territories(){
-        return $this->hasMany(Territory::class);
+    public function responsible(){
+        return $this->belongsTo(Worker::class, 'responsible_id');
     }
+
 
     public function departments(){
         return $this->belongsToMany(Department::class, 'department_territory');
     }
 
-    public function processes(){
-        return $this->belongsToMany(Process::class, 'activity_unit');
-    }
-    public function products(){
-        return $this->belongsToMany(Product::class, 'activity_unit');
-    }
-    public function services(){
-        return $this->belongsToMany(Service::class, 'activity_unit');
+    public function activities(){
+        return $this->belongsToMany(Activity::class);
     }
 
+    public function actions(){
+        return $this->belongsToMany(Action::class);
+    }
 
     //Relationships for Risks
 

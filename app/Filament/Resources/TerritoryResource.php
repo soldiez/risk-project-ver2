@@ -33,27 +33,22 @@ class TerritoryResource extends Resource
 
                 Forms\Components\Select::make('unit')
                     ->relationship('unit', 'name')
-//                    ->options(Unit::all()->pluck('name', 'id'))
-//                    ->searchable()
-                    ->label(__('Unit')),
+                    ->label(__('Unit'))
+                    ->reactive(),
                 Forms\Components\Select::make('parent')
                     ->reactive()
-//                        ->relationship('parent', 'name')
-
-
                     ->options(function (callable $get){
                         if($get('name') != NULL) {
                             return Territory::where('name', '!=', $get('name'))->pluck('name', 'id');
                         }
                         return Territory::all()->pluck('name', 'id');
                     })
-//                    ->searchable()
                     ->label(__('Parent')),
                 Forms\Components\TextInput::make('name')
                     ->label(__('Name')),
                 Forms\Components\Select::make('responsible_id')
                     ->label(__('Responsible person'))
-                    ->options(Worker::all()->pluck('last_name', 'id')),
+                    ->options(fn($get)=>Worker::where('unit_id', $get('unit_id'))->pluck('last_name', 'id')),
 //                Forms\Components\Select::make('department_id')
 //                    ->label(__('Подразделение'))
 //                    ->options(Department::all()->pluck('name', 'id')),
@@ -173,8 +168,5 @@ class TerritoryResource extends Resource
             'edit' => Pages\EditTerritory::route('/{record}/edit'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count()-1;
-    }
+
 }

@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Risk\RiskMethod;
+use App\Models\Unit\Activities;
+use App\Models\Unit\Activity;
 use App\Models\Unit\Department;
 use App\Models\Unit\Position;
 use App\Models\Unit\Process;
@@ -84,54 +86,39 @@ class OneCompanySeeder extends Seeder
                 ->create();
         }
 
-
+// Seed Activities
         for ($ident = 0; $ident <= 20; $ident++) {
 
-            $territory = $unit->territories->random()->id;
+            $territory = $unit->territories->random();
             $worker = $unit->workers->random();
-            $positionId = $worker->position->id;
-            $departmentId = $worker->department->id;
+            $position = $worker->position;
+            $department = $worker->department;
+
+            $activity = Activity::factory()->for($unit)->create();
+
+                $activity->territories()->save($territory);
+                $activity->departments()->save($department);
+                $activity->positions()->save($position);
 
 
-            $process = Process::factory()->for($unit)->create();
-            $product = Product::factory()->for($unit)->create();
-            $service = Service::factory()->for($unit)->create();
-
-            DB::table('activity_unit')->insert([
-                'process_id' => $process->id,
-                'product_id' => $product->id,
-                'service_id' => $service->id,
-                'worker_id' => $worker->id,
-                'position_id' => $positionId,
-                'department_id' => $departmentId,
-                'territory_id' => $territory,
-            ]);
         }
-
+//Seed children activities
         for ($ident = 0; $ident <= 30; $ident++) {
-            $parentProc = $unit->processes->random();
-            $parentProd = $unit->products->random();
-            $parentServ = $unit->services->random();
-            $territory = $unit->territories->random()->id;
+
+            $parentActivity = $unit->activities->random();
+
+            $territory = $unit->territories->random();
             $worker = $unit->workers->random();
-            $positionId = $worker->position->id;
-            $departmentId = $worker->department->id;
+            $position = $worker->position;
+            $department = $worker->department;
 
-            $process = Process::factory()->for($unit)->for($parentProc, 'parent')->create();
-            $product = Product::factory()->for($unit)->for($parentProd, 'parent')->create();
-            $service = Service::factory()->for($unit)->for($parentServ, 'parent')->create();
+            $activity = Activity::factory()->for($unit)->for($parentActivity, 'parent')->create();
+            $activity->territories()->save($territory);
+            $activity->departments()->save($department);
+            $activity->positions()->save($position);
 
-            DB::table('activity_unit')->insert([
-                'process_id' => $process->id,
-                'product_id' => $product->id,
-                'service_id' => $service->id,
-                'worker_id' => $worker->id,
-                'position_id' => $positionId,
-                'department_id' => $departmentId,
-                'territory_id' => $territory,
-            ]);
         }
-
+//Seed other data
         $this->call([
            RiskMethod3x3Seeder::class,
            RiskMethod5x5Seeder::class,

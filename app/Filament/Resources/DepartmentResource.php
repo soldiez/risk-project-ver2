@@ -115,7 +115,7 @@ class DepartmentResource extends Resource
                     ->label(__('Unit'))
                     ->relationship('unit', 'name'),
 
-                Tables\Filters\SelectFilter::make(__('Parent'))
+                Tables\Filters\SelectFilter::make('parent')
                     ->label(__('Parent'))
                     ->options(
                         function (){
@@ -153,8 +153,5 @@ class DepartmentResource extends Resource
             'edit' => Pages\EditDepartment::route('/{record}/edit'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count()-1;
-    }
+
 }

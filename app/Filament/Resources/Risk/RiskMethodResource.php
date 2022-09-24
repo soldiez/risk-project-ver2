@@ -180,28 +180,31 @@ class RiskMethodResource extends Resource
                     ->label(__('Name')),
                 Tables\Columns\TextColumn::make('info')
                     ->label(__('Description'))
+                    ->limit(40)
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('units.name')
                     ->label('Units'),
-                Tables\Columns\TextColumn::make('is_risk_frequency')
+                Tables\Columns\BooleanColumn::make('is_risk_frequency')
                     ->label(__('Has Freq.'))
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('is_risk_calculated')
+                Tables\Columns\BooleanColumn::make('is_risk_calculated')
                     ->label(__('Calcul.'))
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('parameters')
-                    ->label(__('Parameters'))
-                    ->toggleable(isToggledHiddenByDefault: true),
+//                Tables\Columns\TextColumn::make('parameters')
+//                    ->label(__('Parameters'))
+//                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('Status'))
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('Created'))
+                    ->date('d-m-Y')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('Updated'))
+                    ->date('d-m-Y')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -235,8 +238,4 @@ class RiskMethodResource extends Resource
         ];
     }
 
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
 }

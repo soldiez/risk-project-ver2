@@ -12,6 +12,7 @@ use App\Models\Risk\RiskSeverity;
 use App\Models\Risk\RiskZone;
 use App\Models\Unit\Unit;
 use App\Models\User;
+use Closure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -34,8 +35,12 @@ class RiskResource extends Resource
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationIcon = 'heroicon-o-hand';
 
+
+
+
     public static function form(Form $form): Form
     {
+
         return $form
             ->schema([
                 //TODO form
@@ -45,7 +50,6 @@ class RiskResource extends Resource
                     ->schema([
                         Forms\Components\DateTimePicker::make('create_date_time')
                             ->label(__('Date of risk creation'))
-//                            ->withoutSeconds()
                             ->maxDate(now())
                             ->default(now())
                             ->withoutTime()
@@ -54,7 +58,8 @@ class RiskResource extends Resource
                         ->relationship('unit', 'name')
                             ->label(__('Unit'))
                         ->columnSpan(2)
-                        ->default(fn()=>auth()->user()->unit->id),
+                        ->default(fn()=>auth()->user()->unit->id)
+                        ,
                         Forms\Components\MultiSelect::make('authors')
                             ->label(__('Authors'))
                             ->relationship('authors', 'last_name')
@@ -68,15 +73,9 @@ class RiskResource extends Resource
                         Forms\Components\MultiSelect::make('positions')
                             ->relationship('positions', 'name')
                             ->label(__('Positions')),
-                        Forms\Components\MultiSelect::make('processes')
-                            ->label(__('Process'))
-                            ->relationship('processes', 'name'),
-                        Forms\Components\MultiSelect::make('products')
-                            ->label(__('Product'))
-                            ->relationship('products', 'name'),
-                        Forms\Components\MultiSelect::make('services')
-                            ->label(__('Service'))
-                            ->relationship('services', 'name'),
+                        Forms\Components\MultiSelect::make('activities')
+                            ->label(__('Activities'))
+                            ->relationship('activities', 'name'), //todo product, process, service
                         Forms\Components\Select::make('risk_method_id')
                             ->label(__('Risk method'))
                             ->relationship('riskMethod', 'name')
@@ -99,20 +98,16 @@ class RiskResource extends Resource
                         Forms\Components\TextInput::make('base_risk_info')
                             ->label(__('Base Risk Information'))
                         ->columnSpan(3),
-
                         Forms\Components\Select::make('hazard_category_id')
                             ->label(__('Hazard category'))
                             ->relationship('hazardCategory', 'name'),
-
                         Forms\Components\Select::make('injured_body_part_id')
                             ->label(__('Injured body part'))
                             ->relationship('injuredBodyPart', 'name'),
-
                         Forms\Components\DatePicker::make('review_date')
                             ->label(__('Review date'))
                             ->withoutSeconds()
                             ->minDate(now()), //TODO Date from settings
-
                         Forms\Components\Select::make('auditor_id')
                             ->label(__('Controller'))
                             ->relationship('auditor', 'name'), //TODO user from group auditors
@@ -123,13 +118,13 @@ class RiskResource extends Resource
                                 Forms\Components\TextInput::make('base_preventive_action')
                                     ->label(__('Base preventive action'))
                                     ->columnSpan(4),
-
                                 Forms\Components\Select::make('base_severity_id')
                                     ->label(__('Severity'))
                                     ->relationship('baseSeverity', 'name',
                                         function (Builder $query, $get) {
-                                            return $query->where('risk_method_id', $get('../../risk_method_id'));
-                                        })
+                                            return $query->where('risk_method_id',
+                                                $get('../../risk_method_id'));
+                                    })
                                     ->reactive(),
                                 Forms\Components\Select::make('base_probability_id')
                                     ->label(__('Probability'))
@@ -141,8 +136,7 @@ class RiskResource extends Resource
                                     ->relationship('baseFrequency', 'name',
                                         fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive()
-                                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
-                                ,
+                                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency),
                                 Forms\Components\Placeholder::make('base_calc_risk')
                                     ->label(__('Risk'))
                                     ->content(function ($get, $set) {
@@ -150,34 +144,12 @@ class RiskResource extends Resource
                                         $baseProbabilityId = $get('base_probability_id');
                                         $baseFrequencyId = $get('base_frequency_id');
                                         $riskMethod = RiskMethod::find($get('../../risk_method_id'));
-
-                                        if ($riskMethod->is_risk_calculated === 0) {
-                                            if ($baseSeverityId && $baseProbabilityId) {
-                                                $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        if ($riskMethod->is_risk_calculated === 1) {
-                                            if ($riskMethod->is_risk_frequency === 1 && $baseSeverityId && $baseProbabilityId && $baseFrequencyId) {
-                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value *
-                                                    RiskFrequency::find($baseFrequencyId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            }
-
-                                            if ($riskMethod->is_risk_frequency === 0 && $baseSeverityId && $baseProbabilityId) {
-                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        return '-';
-                                    })
-                                ,
-
+                                        if(!$baseSeverityId || !$baseProbabilityId){
+                                            return '-';}
+                                        $riskZone = self::CalcRisk($baseSeverityId, $baseProbabilityId, $baseFrequencyId, $riskMethod);
+                                        $set('base_calc_risk', $riskZone->id);
+                                        return $riskZone->name; //TODO color
+                                    }),
                             ])->columnSpan(3)
                             ->columns(4),
 
@@ -202,9 +174,7 @@ class RiskResource extends Resource
                                     ->relationship('propFrequency', 'name',
                                         fn(Builder $query, $get) => $query->where('risk_method_id', $get('../../risk_method_id')))
                                     ->reactive()
-                                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency)
-                                ,
-
+                                    ->visible(fn($get) => RiskMethod::find($get('../../risk_method_id'))->is_risk_frequency),
                                 Forms\Components\Placeholder::make('prop_calc_risk')
                                     ->label(__('Risk'))
                                     ->content(function ($get, $set) {
@@ -212,31 +182,10 @@ class RiskResource extends Resource
                                         $propProbabilityId = $get('prop_probability_id');
                                         $propFrequencyId = $get('prop_frequency_id');
                                         $riskMethod = RiskMethod::find($get('../../risk_method_id'));
-
-                                        if ($riskMethod->is_risk_calculated === 0) {
-                                            if ($propSeverityId && $propProbabilityId) {
-                                                $riskZone = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first();
-                                                $set('prop_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        if ($riskMethod->is_risk_calculated === 1) {
-                                            if ($riskMethod->is_risk_frequency === 1 && $propSeverityId && $propProbabilityId && $propFrequencyId) {
-                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value *
-                                                    RiskFrequency::find($propFrequencyId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            }
-
-                                            if ($riskMethod->is_risk_frequency === 0 && $propSeverityId && $propProbabilityId) {
-                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        return '-';
+                                        if(!$propSeverityId || !$propProbabilityId){return '-';}
+                                        $riskZone = self::CalcRisk($propSeverityId, $propProbabilityId, $propFrequencyId, $riskMethod);
+                                        $set('prop_calc_risk', $riskZone->id);
+                                        return $riskZone->name; //TODO color
                                     }),
                             ])->columnSpan(3)
                             ->columns(4),
@@ -245,7 +194,6 @@ class RiskResource extends Resource
                     ->columns(6)
                     ->columnSpan(2)
                     ->createItemButtonLabel(__('Add risk')
-
                     )->visibleOn('create'),
 
 
@@ -258,20 +206,16 @@ class RiskResource extends Resource
                         Forms\Components\TextInput::make('base_risk_info')
                             ->label(__('Base Risk Information'))
                             ->columnSpan(3),
-
                         Forms\Components\Select::make('hazard_category_id')
                             ->label(__('Hazard category'))
                             ->relationship('hazardCategory', 'name'),
-
                         Forms\Components\Select::make('injured_body_part_id')
                             ->label(__('Injured body part'))
                             ->relationship('injuredBodyPart', 'name'),
-
                         Forms\Components\DatePicker::make('review_date')
                             ->label(__('Review date'))
                             ->withoutSeconds()
                             ->minDate(now()), //TODO Date from settings
-
                         Forms\Components\Select::make('auditor_id')
                             ->label(__('Controller'))
                             ->relationship('auditor', 'name'), //TODO user from group auditors
@@ -282,13 +226,12 @@ class RiskResource extends Resource
                                 Forms\Components\TextInput::make('base_preventive_action')
                                     ->label(__('Base preventive action'))
                                     ->columnSpan(4),
-
                                 Forms\Components\Select::make('base_severity_id')
                                     ->label(__('Severity'))
                                     ->relationship('baseSeverity', 'name',
                                         function (Builder $query, $get) {
                                             return $query->where('risk_method_id', $get('risk_method_id'));
-                                        })
+                                    })
                                     ->reactive(),
                                 Forms\Components\Select::make('base_probability_id')
                                     ->label(__('Probability'))
@@ -300,8 +243,7 @@ class RiskResource extends Resource
                                     ->relationship('baseFrequency', 'name',
                                         fn(Builder $query, $get) => $query->where('risk_method_id', $get('risk_method_id')))
                                     ->reactive()
-                                    ->visible(fn($get) => RiskMethod::find($get('risk_method_id'))->is_risk_frequency)
-                                ,
+                                    ->visible(fn($get) => RiskMethod::find($get('risk_method_id'))->is_risk_frequency),
                                 Forms\Components\Placeholder::make('base_calc_risk')
                                     ->label(__('Risk'))
                                     ->content(function ($get, $set) {
@@ -309,34 +251,12 @@ class RiskResource extends Resource
                                         $baseProbabilityId = $get('base_probability_id');
                                         $baseFrequencyId = $get('base_frequency_id');
                                         $riskMethod = RiskMethod::find($get('risk_method_id'));
-
-                                        if ($riskMethod->is_risk_calculated === 0) {
-                                            if ($baseSeverityId && $baseProbabilityId) {
-                                                $riskZone = RiskZone::where('risk_severity_id', $baseSeverityId)->where('risk_probability_id', $baseProbabilityId)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        if ($riskMethod->is_risk_calculated === 1) {
-                                            if ($riskMethod->is_risk_frequency === 1 && $baseSeverityId && $baseProbabilityId && $baseFrequencyId) {
-                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value *
-                                                    RiskFrequency::find($baseFrequencyId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            }
-
-                                            if ($riskMethod->is_risk_frequency === 0 && $baseSeverityId && $baseProbabilityId) {
-                                                $calculation = RiskSeverity::find($baseSeverityId)->value * RiskProbability::find($baseProbabilityId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        return '-';
+                                        if(!$baseSeverityId || !$baseProbabilityId){return '-';}
+                                        $riskZone = self::CalcRisk($baseSeverityId, $baseProbabilityId, $baseFrequencyId, $riskMethod);
+                                        $set('base_calc_risk', $riskZone->id);
+                                        return $riskZone->name; //TODO color
                                     })
                                 ,
-
                             ])->columnSpan(3)
                             ->columns(4),
 
@@ -371,56 +291,44 @@ class RiskResource extends Resource
                                         $propProbabilityId = $get('prop_probability_id');
                                         $propFrequencyId = $get('prop_frequency_id');
                                         $riskMethod = RiskMethod::find($get('risk_method_id'));
-
-                                        if ($riskMethod->is_risk_calculated === 0) {
-                                            if ($propSeverityId && $propProbabilityId) {
-                                                $riskZone = RiskZone::where('risk_severity_id', $propSeverityId)->where('risk_probability_id', $propProbabilityId)->first();
-                                                $set('prop_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        if ($riskMethod->is_risk_calculated === 1) {
-                                            if ($riskMethod->is_risk_frequency === 1 && $propSeverityId && $propProbabilityId && $propFrequencyId) {
-                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value *
-                                                    RiskFrequency::find($propFrequencyId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            }
-
-                                            if ($riskMethod->is_risk_frequency === 0 && $propSeverityId && $propProbabilityId) {
-                                                $calculation = RiskSeverity::find($propSeverityId)->value * RiskProbability::find($propProbabilityId)->value;
-                                                $riskZone = $riskMethod->riskZones()->where('value', '>=', $calculation)->first();
-                                                $set('base_calc_risk', $riskZone->id);
-                                                return $riskZone->name;
-                                            } //TODO color
-                                        }
-                                        return '-';
+                                        if(!$propSeverityId || !$propProbabilityId){return '-';}
+                                        $riskZone = self::CalcRisk($propSeverityId, $propProbabilityId, $propFrequencyId, $riskMethod);
+                                        $set('prop_calc_risk', $riskZone->id);
+                                        return $riskZone->name; //TODO color
                                     }),
-
                             ])->columnSpan(3)
                             ->columns(4),
                     ])
-
                     ->columns(6)
                     ->columnSpan(2)
                     ->visibleOn('edit'),
 
                 //TODO actions_id process
-
-
-
-
-
-
-
-                //TODO actions_id process
             ]);
-
-
     }
 
+    public static function CalcRisk($severityId, $probabilityId, $frequencyId, RiskMethod $riskMethod){
 
+        if ($riskMethod->is_risk_calculated === 0) {
+            if ($severityId && $probabilityId) {
+                    $riskZone = RiskZone::where('risk_severity_id', $severityId)->where('risk_probability_id', $probabilityId)->first();
+                return $riskZone;
+            }
+        }
+        if ($riskMethod->is_risk_calculated === 1) {
+            if ($riskMethod->is_risk_frequency === 1 && $severityId && $probabilityId && $frequencyId) {
+                $calculation = RiskSeverity::find($severityId)->value * RiskProbability::find($probabilityId)->value *
+                    RiskFrequency::find($frequencyId)->value;
+                $riskZone = RiskZone::where('value', '>=', $calculation)->first();
+                return $riskZone;
+            }
+            if ($riskMethod->is_risk_frequency === 0 && $severityId && $probabilityId) {
+                $calculation = RiskSeverity::find($severityId)->value * RiskProbability::find($probabilityId)->value;
+                $riskZone = RiskZone::where('value', '>=', $calculation)->first();
+                return $riskZone;
+            }
+        }
+    }
 
 
     public static function table(Table $table): Table
@@ -623,7 +531,7 @@ class RiskResource extends Resource
                     ->label(__('Reviewer/PlanDate'))
                     ->formatStateUsing(function ($record) {
                         $name = $record->auditor->name ?? __('None');
-                        $date = date_create($record->review_date);
+                        $date = date_create($record->review_date) ?? false;
                         return  new HtmlString($name . '<br>' . date_format($date, 'd-m-Y')) ;
                     })
                     ->extraAttributes(['class' => 'text-xs'])
@@ -683,15 +591,10 @@ class RiskResource extends Resource
                 Tables\Filters\MultiSelectFilter::make('injuredBodyParts')
                     ->label(__('Injured body parts'))
                     ->relationship('injuredBodyPart', 'name', fn(Builder $query) => $query->whereHas('risks')),
-                Tables\Filters\MultiSelectFilter::make('processes')
-                    ->label(__('Processes'))
-                    ->relationship('processes', 'name', fn(Builder $query) => $query->whereHas('risks')),
-                Tables\Filters\MultiSelectFilter::make('products')
-                    ->label(__('Products'))
-                    ->relationship('products', 'name', fn(Builder $query) => $query->whereHas('risks')),
-                Tables\Filters\MultiSelectFilter::make('services')
-                    ->label(__('Services'))
-                    ->relationship('services', 'name', fn(Builder $query) => $query->whereHas('risks')),
+                Tables\Filters\MultiSelectFilter::make('activities')
+                    ->label(__('Activities'))
+                    ->relationship('activities', 'name', fn(Builder $query) => $query->whereHas('risks')),
+
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -720,11 +623,6 @@ class RiskResource extends Resource
             'create' => pages\CreateRisk::route('/create'),
             'edit' => pages\EditRisk::route('/{record}/edit'),
         ];
-    }
-
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
     }
 
 }

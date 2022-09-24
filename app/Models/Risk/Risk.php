@@ -2,6 +2,7 @@
 
 namespace App\Models\Risk;
 
+use App\Models\Action;
 use App\Models\Unit\Activity;
 use App\Models\Unit\Department;
 use App\Models\Unit\Position;
@@ -113,14 +114,8 @@ class Risk extends Model
     public function positions(){
         return $this->belongsToMany(Position::class);
     }
-    public function processes(){
-        return $this->belongsToMany(Process::class, 'activity_unit');
-    }
-    public function products(){
-        return $this->belongsToMany(Product::class, 'activity_unit');
-    }
-    public function services(){
-        return $this->belongsToMany(Service::class, 'activity_unit');
+    public function activities(){
+        return $this->belongsToMany(Activity::class);
     }
 
     public function authors(){ //Authors of risks
@@ -135,9 +130,9 @@ class Risk extends Model
     }
 
 
-//    public function actions(){
-//        return $this->hasMany(Action::class);
-//    }
+    public function actions(){
+        return $this->belongsToMany(Action::class);
+    }
 
     public function hazardCategory(){
         return $this->belongsTo(HazardCategory::class);
@@ -175,21 +170,5 @@ class Risk extends Model
     public function propCalcRisk(){
         return $this->belongsTo(RiskZone::class, 'prop_calc_risk');
     }
-
-
-
-
-//    public function riskSeverity(){
-//        return $this->hasManyThrough(RiskSeverity::class, RiskMethod::class);
-//    }
-//    public function riskProbability(){
-//        return $this->hasManyThrough(RiskProbability::class, RiskMethod::class);
-//    }
-//    public function riskFrequency(){
-//        return $this->hasManyThrough(RiskFrequency::class, RiskMethod::class);
-//    }
-
-
-
 
 }

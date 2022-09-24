@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Action;
 use App\Models\Risk\Risk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +51,7 @@ class Position extends Model
         return $this->belongsTo(Position::class, 'parent_id');
     }
     public function positions(){
-        return $this->hasMany(Position::class);
+        return $this->hasMany(Position::class, 'parent_id');
     }
 
     public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -65,15 +66,14 @@ class Position extends Model
     {
         return $this->hasMany(Worker::class);
     }
-    public function processes(){
-        return $this->belongsToMany(Process::class, 'activity_unit');
+    public function activities(){
+        return $this->belongsToMany(Activity::class);
     }
-    public function products(){
-        return $this->belongsToMany(Product::class, 'activity_unit');
+
+    public function actions(){
+        return $this->belongsToMany(Action::class);
     }
-    public function services(){
-        return $this->belongsToMany(Service::class, 'activity_unit');
-    }
+
 
     public function territoryResponsible(): \Illuminate\Database\Eloquent\Relations\HasOne
     {

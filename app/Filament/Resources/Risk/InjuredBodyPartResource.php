@@ -70,8 +70,5 @@ class InjuredBodyPartResource extends Resource
             'index' => Pages\ManageInjuredBodyParts::route('/'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
+
 }

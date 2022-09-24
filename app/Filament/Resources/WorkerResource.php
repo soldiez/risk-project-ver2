@@ -55,13 +55,15 @@ class WorkerResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('unit_id')
                             ->label(__('Unit'))
-                            ->options(Unit::all()->pluck('name', 'id')),
+                            ->options(Unit::all()->pluck('name', 'id'))
+                            ->reactive(),
                         Forms\Components\Select::make('department_id')
                             ->label(__('Department'))
-                            ->options(Department::all()->pluck('name', 'id')),
+                            ->options(fn($get) => Department::where('unit_id', $get('unit_id'))->pluck('name', 'id'))
+                            ->reactive(),
                         Forms\Components\Select::make('position_id')
                             ->label(__('Position'))
-                            ->options(Position::all()->pluck('name', 'id')),
+                            ->options(fn($get)=>Position::where('department_id', $get('department_id'))->pluck('name', 'id')),
                     ])->columns(3),
                 Forms\Components\Fieldset::make('')
                     ->schema([
@@ -151,26 +153,18 @@ class WorkerResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make(__('Unit'))
-                    ->options(
-                        function (){
-                            return Unit::whereIn('id', Worker::get('unit_id'))->pluck('name', 'id');
-                        })
-                    ->column('unit_id')
+                Tables\Filters\SelectFilter::make('unit')
+                    ->label(__('Unit'))
+                ->relationship('unit', 'name', fn($query)=>$query->whereHas('workers'))
                 ,
-                Tables\Filters\SelectFilter::make(__('Department'))
-                    ->options(
-                        function (){
-                            return Department::whereIn('id', Worker::get('department_id'))->pluck('name', 'id');
-                        })
-                    ->column('department_id')
+                Tables\Filters\SelectFilter::make('department')
+                    ->label(__('Department'))
+                    ->relationship('department', 'name', fn($query)=>$query->whereHas('workers'))
                 ,
-                Tables\Filters\SelectFilter::make(__('Position'))
-                    ->options(
-                        function (){
-                            return Position::whereIn('id', Worker::get('position_id'))->pluck('name', 'id');
-                        })
-                    ->column('position_id'),
+                Tables\Filters\SelectFilter::make('position')
+                    ->label(__('Position'))
+                    ->relationship('position', 'name', fn($query)=>$query->whereHas('workers'))
+                ,
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -198,8 +192,5 @@ class WorkerResource extends Resource
             'edit' => Pages\EditWorker::route('/{record}/edit'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count();
-    }
+
 }

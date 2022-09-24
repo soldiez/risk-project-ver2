@@ -20,4 +20,5 @@ class EditRisk extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
 }

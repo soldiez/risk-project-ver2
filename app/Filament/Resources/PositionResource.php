@@ -32,11 +32,12 @@ class PositionResource extends Resource
                 Forms\Components\Select::make('unit_id')
                     ->label(__('Unit'))
                     ->searchable()
+                    ->reactive()
                     ->options(Unit::all()->pluck('name', 'id')),
                 Forms\Components\Select::make('department_id')
                     ->label(__('Department'))
                     ->searchable()
-                    ->options(Department::all()->pluck('name', 'id')),
+                    ->options(fn($get)=>Department::where('unit_id', $get('unit_id'))->pluck('name', 'id')),
                 Forms\Components\Select::make('parent_id')
                     ->reactive()
                     ->options(function (callable $get){ //do not choice by myself
@@ -113,14 +114,12 @@ class PositionResource extends Resource
                 Tables\Filters\SelectFilter::make('unit')
                     ->label(__('Unit'))
                     ->relationship('unit', 'name'),
-
-                Tables\Filters\SelectFilter::make(__('Parent'))
+                Tables\Filters\SelectFilter::make('parent')
                     ->label(__('Parent'))
                     ->options(
                         function (){
                             return Position::whereIn('id', Position::get('parent_id'))->pluck('name', 'id');
-                        })
-                    ->column('parent_id'),
+                        })->column('parent_id'),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -149,8 +148,5 @@ class PositionResource extends Resource
             'edit' => Pages\EditPosition::route('/{record}/edit'),
         ];
     }
-    protected static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count()-1;
-    }
+
 }

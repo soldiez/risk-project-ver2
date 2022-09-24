@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Risk\RiskResource\Pages;
 
 use App\Filament\Resources\Risk\RiskResource;
 use App\Models\Risk\Risk;
+use App\Models\Unit\Activity;
 use App\Models\Unit\Department;
 use App\Models\Unit\Position;
 use App\Models\Unit\Process;
@@ -21,7 +22,6 @@ class CreateRisk extends CreateRecord
 
 public function create(bool $another = false): void
 {
-
     $data = $this->data;
     $risks = $data['risks'];
 
@@ -54,23 +54,13 @@ public function create(bool $another = false): void
         foreach ($data['territories'] as $territory) { $model->territories()->save(Territory::find($territory));}
         foreach ($data['positions'] as $position) { $model->positions()->save(Position::find($position));}
         foreach ($data['departments'] as $department) { $model->departments()->save(Department::find($department));}
-        foreach ($data['processes'] as $process) { $model->processes()->save(Process::find($process));}
-        foreach ($data['products'] as $product) { $model->products()->save(Product::find($product));}
-        foreach ($data['services'] as $service) { $model->services()->save(Service::find($service));}
+        foreach ($data['activities'] as $activity) { $model->activities()->save(Activity::find($activity));}
 
         Notification::make()
             ->title(__('Saved successfully'))
             ->success()
             ->send();
     }
-//    return
-//        parent::create($another);
 }
-
-
-
-
-
-
 }
 

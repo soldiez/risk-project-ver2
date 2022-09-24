@@ -126,53 +126,41 @@ return new class extends Migration
         //"Many to many" relationship tables
 
         Schema::create('risk_method_unit', function (Blueprint $table) {
-            $table->id();
-            $table->integer('risk_method_id');
-            $table->integer('unit_id');
+            $table->foreignId('risk_method_id')->constrained();
+            $table->foreignId('unit_id')->constrained();
             $table->timestamps();
         });
 
-
-//        Schema::create('risk_unit', function (Blueprint $table) {
-//            $table->id();
-//            $table->integer('risk_id');
-//            $table->integer('unit_id');
-//            $table->timestamps();
-//        });
-
         Schema::create('risk_territory', function (Blueprint $table) {
-            $table->id();
-            $table->integer('risk_id');
-            $table->integer('territory_id');
+            $table->foreignId('risk_id')->constrained();
+            $table->foreignId('territory_id')->constrained();
             $table->timestamps();
         });
 
         Schema::create('department_risk', function (Blueprint $table) {
-            $table->id();
-            $table->integer('risk_id');
-            $table->integer('department_id');
+            $table->foreignId('risk_id')->constrained();
+            $table->foreignId('department_id')->constrained();
             $table->timestamps();
         });
 
         Schema::create('position_risk', function (Blueprint $table) {
-            $table->id();
-            $table->integer('risk_id');
-            $table->integer('position_id');
+            $table->foreignId('risk_id')->constrained();
+            $table->foreignId('position_id')->constrained();
             $table->timestamps();
         });
 
-        Schema::create('action_risk', function (Blueprint $table) {
-            $table->id();
-            $table->integer('risk_id');
-            $table->integer('action_id');
-            $table->timestamps();
-        });
         Schema::create('author_risk', function (Blueprint $table) {
-            $table->id();
-            $table->integer('worker_id');
-            $table->integer('risk_id');
+            $table->foreignId('worker_id')->constrained();
+            $table->foreignId('risk_id')->constrained();
             $table->timestamps();
         });
+
+        Schema::create('activity_risk', function (Blueprint $table) {
+            $table->foreignId('activity_id')->constrained();
+            $table->foreignId('risk_id')->constrained();
+            $table->timestamps();
+        });
+
     }
 
     /**
@@ -196,7 +184,7 @@ return new class extends Migration
         Schema::dropIfExists('risk_method_unit');
         Schema::dropIfExists('department_risk');
         Schema::dropIfExists('position_risk');
-        Schema::dropIfExists('action_risk');
         Schema::dropIfExists('author_risk');
+        Schema::dropIfExists('activity_risk');
     }
 };

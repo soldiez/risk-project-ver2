@@ -14,7 +14,6 @@ class CreateTerritoryUnitTable extends Migration
     public function up()
     {
         Schema::create('territory_unit', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('territory_id');
             $table->foreignId('unit_id');
             $table->timestamps();

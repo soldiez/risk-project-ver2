@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Action;
 use App\Models\Risk\Risk;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -68,15 +69,13 @@ class Department extends Model
     public function territories(){
         return $this->belongsToMany(Territory::class, 'department_territory');
     }
-    public function processes(){
-        return $this->belongsToMany(Process::class, 'activity_unit');
+    public function activities(){
+        return $this->belongsToMany(Activity::class);
     }
-    public function products(){
-        return $this->belongsToMany(Product::class, 'activity_unit');
+    public function actions(){
+        return $this->belongsToMany(Action::class);
     }
-    public function services(){
-        return $this->belongsToMany(Service::class, 'activity_unit');
-    }
+
 
 
     //Relationships for risks

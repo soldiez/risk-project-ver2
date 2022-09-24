@@ -2,6 +2,7 @@
 
 namespace App\Models\Unit;
 
+use App\Models\Action;
 use App\Models\Risk\Risk;
 use App\Models\Risk\RiskMethod;
 use App\Models\Unit\Department;
@@ -69,7 +70,7 @@ class Unit extends Model
         return $this->belongsTo(Unit::class, 'parent_id');
     }
     public function units(){
-        return $this->hasMany(Unit::class);
+        return $this->hasMany(Unit::class, 'id');
     }
 
     public function territories(){
@@ -85,22 +86,20 @@ class Unit extends Model
     public function workers(){
         return $this->hasMany(Worker::class);
     }
-    public function processes(){
-        return $this->hasMany(Process::class);
+    public function activities(){
+        return $this->hasMany(Activity::class);
     }
-    public function products(){
-        return $this->hasMany(Product::class);
+    public function actions(){
+        return $this->hasMany(Action::class);
     }
-    public function services(){
-        return $this->hasMany(Service::class);
-    }
+
 
 
     public function manager(){
-        return $this->belongsTo(Position::class, 'manager_id');
+        return $this->belongsTo(Worker::class, 'manager_id');
     }
     public function safetyManager(){
-        return $this->belongsTo(Position::class, 'safety_manager_id');
+        return $this->belongsTo(Worker::class, 'safety_manager_id');
     }
 
     //Relationships for risks

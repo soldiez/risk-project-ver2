@@ -5,9 +5,9 @@ namespace Database\Factories\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Unit\Product>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Unit\Activity>
  */
-class ProductFactory extends Factory
+class ActivityFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,6 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             //
+            'type' => array_rand(['Process'=>'Process','Product'=>'Product','Service'=>'Service']),
             'name' => $this->faker->text(15),
             'description' => $this->faker->realText(100),
             'status' => 'Active',
